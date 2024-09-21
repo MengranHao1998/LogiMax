@@ -8,7 +8,8 @@
     "express": "^4.21.0",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.9.0"
+    "mongodb": "^6.9.0",
+    "ts-node": "^10.9.2"
   },
   "name": "logimax",
   "version": "1.0.0",
