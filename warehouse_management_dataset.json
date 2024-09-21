@@ -1,0 +1,196 @@
+{
+    "warehouses": [
+        {
+            "warehouse_id": 1,
+            "location": "New York",
+            "products": [
+                {
+                    "product_id": 101,
+                    "name": "Laptop",
+                    "stock": 120,
+                    "min_stock_level": 50,
+                    "max_stock_level": 200,
+                    "turnover_rate": 0.8
+                },
+                {
+                    "product_id": 102,
+                    "name": "Smartphone",
+                    "stock": 300,
+                    "min_stock_level": 100,
+                    "max_stock_level": 500,
+                    "turnover_rate": 1.2
+                },
+                {
+                    "product_id": 103,
+                    "name": "Headphones",
+                    "stock": 500,
+                    "min_stock_level": 200,
+                    "max_stock_level": 800,
+                    "turnover_rate": 1.5
+                }
+            ],
+            "space_utilization": 85,
+            "employee_productivity": [
+                {
+                    "employee_id": 1,
+                    "name": "John Doe",
+                    "orders_processed": 120
+                },
+                {
+                    "employee_id": 2,
+                    "name": "Jane Smith",
+                    "orders_processed": 135
+                }
+            ],
+            "shipments": [
+                {
+                    "shipment_id": 3001,
+                    "shipment_date": "2024-09-02",
+                    "incoming": false,
+                    "order_ids": [
+                        5001
+                    ],
+                    "products": [
+                        {
+                            "product_id": 101,
+                            "quantity": 2
+                        },
+                        {
+                            "product_id": 103,
+                            "quantity": 5
+                        }
+                    ]
+                },
+                {
+                    "shipment_id": 3002,
+                    "shipment_date": "2024-09-10",
+                    "incoming": true,
+                    "products": [
+                        {
+                            "product_id": 101,
+                            "quantity": 50
+                        },
+                        {
+                            "product_id": 103,
+                            "quantity": 100
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "warehouse_id": 2,
+            "location": "Los Angeles",
+            "products": [
+                {
+                    "product_id": 104,
+                    "name": "Tablet",
+                    "stock": 200,
+                    "min_stock_level": 75,
+                    "max_stock_level": 350,
+                    "turnover_rate": 0.9
+                },
+                {
+                    "product_id": 105,
+                    "name": "Smartwatch",
+                    "stock": 150,
+                    "min_stock_level": 50,
+                    "max_stock_level": 250,
+                    "turnover_rate": 1.1
+                },
+                {
+                    "product_id": 106,
+                    "name": "Monitor",
+                    "stock": 75,
+                    "min_stock_level": 30,
+                    "max_stock_level": 150,
+                    "turnover_rate": 0.7
+                }
+            ],
+            "space_utilization": 70,
+            "employee_productivity": [
+                {
+                    "employee_id": 3,
+                    "name": "Emily Johnson",
+                    "orders_processed": 90
+                },
+                {
+                    "employee_id": 4,
+                    "name": "Michael Brown",
+                    "orders_processed": 110
+                }
+            ],
+            "shipments": [
+                {
+                    "shipment_id": 3003,
+                    "shipment_date": "2024-09-07",
+                    "incoming": false,
+                    "order_ids": [
+                        5002
+                    ],
+                    "products": [
+                        {
+                            "product_id": 104,
+                            "quantity": 3
+                        },
+                        {
+                            "product_id": 106,
+                            "quantity": 2
+                        }
+                    ]
+                },
+                {
+                    "shipment_id": 3004,
+                    "shipment_date": "2024-09-08",
+                    "incoming": true,
+                    "products": [
+                        {
+                            "product_id": 104,
+                            "quantity": 75
+                        },
+                        {
+                            "product_id": 106,
+                            "quantity": 25
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "orders": [
+        {
+            "order_id": 5001,
+            "order_date": "2024-09-01",
+            "delivery_deadline": "2024-09-05",
+            "status": "delivered",
+            "shipment_id": 3001,
+            "products": [
+                {
+                    "product_id": 101,
+                    "quantity": 2
+                },
+                {
+                    "product_id": 103,
+                    "quantity": 5
+                }
+            ]
+        },
+        {
+            "order_id": 5002,
+            "order_date": "2024-09-03",
+            "delivery_deadline": "2024-09-06",
+            "status": "delayed",
+            "shipment_id": 3003,
+            "products": [
+                {
+                    "product_id": 104,
+                    "quantity": 3
+                },
+                {
+                    "product_id": 106,
+                    "quantity": 2
+                }
+            ]
+        }
+    ]
+}
