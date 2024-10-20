@@ -2,4 +2,57 @@
 <script>
     console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
 </script>
+<section class="menu">
+    <h1>New York/Los Angeles</h1>
+    <section class="dropdowns">
+        <select name="location" id="location">
+            <option value="New York">New York</option>
+            <option value="Los Angeles">Los Angeles</option>
+        </select>
+        <select name="date" id="date">
+            <option value="Date">Date</option>
+        </select>
+    </section>
+</section>
+<h2>Overview</h2>
+<section class="firstrow">
+    <div class="statcard">
+        <i>&#x1F4E6;</i>
+        <h2>1940</h2>
+        <p>Orders Verwerkt</p>
+    </div>
+    <div class="statcard">
+        <i>&#x1F4E6;</i>
+        <h2>60</h2>
+        <p>Orders Vertraagd</p>
+    </div>
+    <div class="statcard">
+        <i>&#x25D4;</i>
+        <h2>97%</h2>
+        <p>Orderverwerkingspercentage</p>
+    </div>
+    <div class="statcard">
+        <i>&#x25D4;</i>
+        <h2>68.2%</h2>
+        <p>Ruimtegebruik</p>
+    </div>
+</section>
+<h2>Voorraad Omzet</h2>
+<section class="secondrow">
+    <div class="placeholder">PLACEHOLDER</div>
+    <div class="statcard">
+        <i>&#x25D4;</i>
+        <h2>1.5</h2>
+        <p>Omzet</p>
+    </div>
+</section>
+<h3>Meest Verkocht</h3>
+<section class="thirdrow">
+    <div class="placeholder">PLACEHOLDER</div>
+    <div class="statcard">
+        <i>&#x1F4CA;</i>
+        <h2>LOW</h2>
+        <p>Product 1 Stock</p>
+    </div>
+</section>
 <%- include("partials/doc-end")%>
