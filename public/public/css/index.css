@@ -1,0 +1,38 @@
+.main .menu{
+    margin-left: 0;
+    align-items: center;
+    font-size: x-large;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.main .dropdowns {
+    margin-left: auto;
+    margin-right: 15%;
+}
+
+.main section {
+    margin: 1rem;
+    justify-content: flex-start;
+}
+
+.main .firstrow, .secondrow, .thirdrow {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 3rem;
+}
+
+.statcard {
+    font-size: larger;
+    padding: 2rem 1rem 2rem 1rem;
+    width: 12rem;
+    text-align: center;
+    word-wrap: break-word;
+    border: 1px black solid;
+}
+
+.placeholder {
+    width: 66%;
+    border: 1px solid black;
+    text-align: center;
+}

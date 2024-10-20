@@ -108,7 +108,7 @@ nav li:last-child a {
 
 /* MAIN */
 
-main {
+.main {
     grid-area: main;
     background-color: var(--background-almost-grey);
     color: var(--text-color);
