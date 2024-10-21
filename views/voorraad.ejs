@@ -1,3 +1,48 @@
 <%- include("partials/header-nav")%>
-
+<script>
+    console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
+</script>
+<section class="menu">
+    <h1>New York/Los Angeles</h1>
+    <section class="dropdowns">
+        <select name="location" id="location">
+            <option value="New York">New York</option>
+            <option value="Los Angeles">Los Angeles</option>
+        </select>
+        <select name="date" id="date">
+            <option value="Date">Date</option>
+        </select>
+    </section>
+</section>
+<article>
+    <h2>Ruimtegebruik</h2>
+    <section class="firstrow">
+        <div class="statcard">
+            <p>PLACEHOLDER</p>
+        </div>
+        <div class="statcard">
+            <i>&#x1F4E6;</i>
+            <h2>1.5</h2>
+            <p>Omzet</p>
+        </div>
+        <div class="statcard">
+            <i>&#x25D4;</i>
+            <h2>1527</h2>
+            <p>Beschikbare Ruimte</p>
+            <p>3237/4800</p>
+        </div>
+    </section>
+</article>
+<article>
+    <h2>Voorraad Omzet</h2>
+    <section class="secondrow">
+        <div class="placeholder">PLACEHOLDER</div>
+    </section>
+</article>
+<article>
+    <h2>Meest Verkocht</h2>
+<section class="thirdrow">
+    <div class="placeholder">PLACEHOLDER</div>
+</section>
+</article>
 <%- include("partials/doc-end")%>

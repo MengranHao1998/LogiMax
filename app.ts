@@ -16,5 +16,15 @@ app.get("/login",(req,res)=> {
     res.render("login");
 })
 
+// renderen pagina voorraad
+app.get("/voorraad",(req,res)=> {
+  res.render("voorraad");
+})
+
+// renderen pagina processes
+app.get("/processes",(req,res)=> {
+  res.render("processes");
+})
+
 
 export {app};

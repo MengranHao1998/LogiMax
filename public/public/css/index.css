@@ -11,9 +11,18 @@
     margin-right: 15%;
 }
 
+.main article {
+    display: flex;
+    flex-direction: column;
+}
+
+.main article h2 {
+    text-align: center
+}
+
 .main section {
     margin: 1rem;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 .main .firstrow, .secondrow, .thirdrow {
