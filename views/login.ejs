@@ -1,3 +1,21 @@
-<%- include("partials/header-nav")%>
-
+<%- include("partials/login")%>
+<main class="login-container">
+    <section class="login-form">
+        <form>
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Value">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Value">
+            <button type="submit">Sign In</button>
+        </form>
+    </section>
+    <section class="login-info">
+        <figure class="info-content">
+            <img src="/images/logo.png" alt="LogiMax Icon" class="icon">
+            <figcaption>
+                <p>Welcome,<br>Log into your LogiMax account.</p>
+            </figcaption>
+        </figure>
+    </section>
+</main>
 <%- include("partials/doc-end")%>
