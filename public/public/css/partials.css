@@ -50,6 +50,9 @@ header {
     width: 40px;
     height: 40px;
     border-radius: 100%;
+    background-image: url("/images/client.png");
+    background-size: cover;
+    background-position: center;
 }
 
 #profile-name {
@@ -84,7 +87,19 @@ aside {
     width: 20px;
     height: 20px;
     margin-right: 10px;
-    background-color: black;
+    background-size: cover;
+    background-position: center;
+}
+li:nth-child(1) .span-icon {
+    background-image: url("/images/home-icon.png");
+}
+
+li:nth-child(2) .span-icon {
+    background-image: url("/images/voorraad-icon.png");
+}
+
+li:nth-child(3) .span-icon {
+    background-image: url("/images/processes-icon.png");
 }
 
 nav {

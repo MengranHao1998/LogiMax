@@ -2,6 +2,10 @@
 <script>
     console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
 </script>
+<!-- JS CALENDAR SCRIPT -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <section class="menu">
     <h1>New York/Los Angeles</h1>
     <section class="dropdowns">
@@ -9,26 +13,31 @@
             <option value="New York">New York</option>
             <option value="Los Angeles">Los Angeles</option>
         </select>
-        <select name="date" id="date">
-            <option value="Date">Date</option>
-        </select>
+        <input type="text" name="date" id="date" placeholder="Selecteer Datum" />
+            <script>
+                $(function() {
+                    $("#date").datepicker({
+                        dateFormat: "dd-mm-yy" // OMZETTEN DATA IN EU FORMAAT
+                    });
+                });
+            </script>
     </section>
 </section>
-<article>
+<article class = "processes-page">
     <h2>Overview</h2>
     <section class="firstrow">
         <div class="statcard">
-            <i>&#x1F4E6;</i>
+            <i></i>
             <h1>1527</h1>
             <p>Verzendingen</p>
         </div>
         <div class="statcard">
-            <i>&#x1F4E6;</i>
+            <i></i>
             <h2>1227</h2>
             <p>Aangekomen</p>
         </div>
         <div class="statcard">
-            <i>&#x1F4E6;</i>
+            <i></i>
             <h2>300</h2>
             <p>Onderweg</p>
         </div>

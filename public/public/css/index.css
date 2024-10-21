@@ -31,6 +31,7 @@
     gap: 3rem;
 }
 
+/* STATCARDS */
 .statcard {
     font-size: larger;
     padding: 2rem 1rem 2rem 1rem;
@@ -38,10 +39,52 @@
     text-align: center;
     word-wrap: break-word;
     border: 1px black solid;
+    border-radius: 5%;
+    box-shadow: 1px 3px #acb1b6;
+}
+.firstrow .statcard:nth-child(1) i,.firstrow .statcard:nth-child(2) i {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url("/images/orders-icon.png"); /* Use the same icon */
+    background-size: cover;
+    background-position: center; 
 }
 
+.firstrow .statcard i {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url("/images/voorraad-icon.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.secondrow i{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url("/images/turnover-icon.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.thirdrow i{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-image: url("/images/low-chart-icon.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.thirdrow H2{
+    color: red;
+}
+/* PLACEHOLDER */
 .placeholder {
     width: 66%;
     border: 1px solid black;
     text-align: center;
+    box-shadow: 1px 3px #acb1b6;
 }

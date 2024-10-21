@@ -4,25 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogiMax Dashboard</title>
+    <link rel="icon" sizes="32x32" href="/images/web-icon.png">
     <link rel="stylesheet" href="/css/reset.css">
     <link rel="stylesheet" href="/css/partials.css">
     <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
     <header>
-        <a href="index.html"><img src="/images/logo.png" alt="LogiMax Logo" id="logo"></a>
+        <a href="/"><img src="/images/logo.png" alt="LogiMax Logo" id="logo"></a>
         <section id="header-account">
             <span id="profile-picture"></span>
-            <span id="profile-name">John Doe</span>
+            <span id="profile-name">Peeters Jannes</span>
             <button>Log out</button>
         </section>
     </header>
     <aside>
         <nav>
             <ul>
-                <li><a href="/" class="current-page"><span class="span-icon"></span>Home</a></li>
-                <li><a href="/voorraad"><span class="span-icon"></span>Voorraad</a></li>
-                <li><a href="/processes"><span class="span-icon"></span>Processes</a></li>
+                <li><a href="/" class="<%= activePage === 'home' ? 'current-page' : '' %>"><span class="span-icon"></span>Home</a></li>
+                <li><a href="/voorraad" class="<%= activePage === 'voorraad' ? 'current-page' : '' %>"><span class="span-icon"></span>Voorraad</a></li>
+                <li><a href="/processes" class="<%= activePage === 'processes' ? 'current-page' : '' %>"><span class="span-icon"></span>Processes</a></li>
             </ul>
         </nav>
     </aside>

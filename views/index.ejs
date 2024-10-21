@@ -2,6 +2,10 @@
 <script>
     console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
 </script>
+<!-- JS CALENDAR SCRIPT -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <section class="menu">
     <h1>New York/Los Angeles</h1>
     <section class="dropdowns">
@@ -9,31 +13,36 @@
             <option value="New York">New York</option>
             <option value="Los Angeles">Los Angeles</option>
         </select>
-        <select name="date" id="date">
-            <option value="Date">Date</option>
-        </select>
+        <input type="text" name="date" id="date" placeholder="Selecteer Datum" />
+            <script>
+                $(function() {
+                    $("#date").datepicker({
+                        dateFormat: "dd-mm-yy" // OMZETTEN DATA IN EU FORMAAT
+                    });
+                });
+            </script>
     </section>
 </section>
 <article>
     <h2>Overview</h2>
 <section class="firstrow">
     <div class="statcard">
-        <i>&#x1F4E6;</i>
+        <i></i>
         <h2>1940</h2>
         <p>Orders Verwerkt</p>
     </div>
     <div class="statcard">
-        <i>&#x1F4E6;</i>
+        <i></i>
         <h2>60</h2>
         <p>Orders Vertraagd</p>
     </div>
     <div class="statcard">
-        <i>&#x25D4;</i>
+        <i></i>
         <h2>97%</h2>
         <p>Orderverwerkingspercentage</p>
     </div>
     <div class="statcard">
-        <i>&#x25D4;</i>
+        <i></i>
         <h2>68.2%</h2>
         <p>Ruimtegebruik</p>
     </div>
@@ -44,7 +53,7 @@
     <section class="secondrow">
         <div class="placeholder">PLACEHOLDER</div>
         <div class="statcard">
-            <i>&#x25D4;</i>
+            <i></i>
             <h2>1.5</h2>
             <p>Omzet</p>
         </div>
@@ -55,7 +64,7 @@
     <section class="thirdrow">
         <div class="placeholder">PLACEHOLDER</div>
         <div class="statcard">
-            <i>&#x1F4CA;</i>
+            <i></i>
             <h2>LOW</h2>
             <p>Product 1 Stock</p>
         </div>
