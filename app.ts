@@ -42,5 +42,10 @@ app.get('/processes', (req, res) => {
   res.render('processes', { activePage: 'processes' });
 });
 
+// renderen chart INDEX
+app.get('/home', (req, res) => {
+  const chartData = [0]; // Example data
+  res.render('index', { chartData });
+});
 
 export {app};

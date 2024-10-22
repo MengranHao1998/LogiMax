@@ -51,7 +51,7 @@
 <article>
     <h2>Voorraad Omzet</h2>
     <section class="secondrow">
-        <div class="placeholder">PLACEHOLDER</div>
+        <div class="placeholder"> <canvas id="voorraadOmzet" width="" height=""></canvas></div>
         <div class="statcard">
             <i></i>
             <h2>1.5</h2>
@@ -62,7 +62,22 @@
 <article>
     <h2>Meest Verkocht</h2>
     <section class="thirdrow">
-        <div class="placeholder">PLACEHOLDER</div>
+        <div class="placeholder">
+            <table id="productTable" border="1">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Amount Sold</th>
+                        <th>Total Earnings</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+        </div>
         <div class="statcard">
             <i></i>
             <h2>LOW</h2>
@@ -71,3 +86,7 @@
     </section>
 </article>
 <%- include("partials/doc-end")%>
+</script>
+<!-- CHART SCRIPTS  -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboard-charts.js"></script>

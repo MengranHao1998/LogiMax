@@ -42,6 +42,7 @@
     border-radius: 5%;
     box-shadow: 1px 3px #acb1b6;
 }
+
 .firstrow .statcard:nth-child(1) i,.firstrow .statcard:nth-child(2) i {
     display: inline-block;
     width: 30px;
@@ -81,10 +82,34 @@
 .thirdrow H2{
     color: red;
 }
-/* PLACEHOLDER */
+/* VOORRAAD OMZET PLACEHOLDER */
 .placeholder {
     width: 66%;
     border: 1px solid black;
     text-align: center;
     box-shadow: 1px 3px #acb1b6;
+}
+.placeholder canvas {
+    width: 100%;  /* Maakt de chart responsief */
+    height: auto;
+}
+/* MEEST VERKOCHT PLACEHOLDER */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+thead th {
+    background-color: #f2f2f2;
+    padding: 10px;
+}
+
+tbody td {
+    padding: 10px;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
 }

@@ -32,6 +32,8 @@ body {
     justify-content: flex-start;
     padding-top: 20px;
     padding-bottom: 20px;
+    border-top-right-radius: 0%;
+    border-bottom-right-radius: 0%;
 }
 
 .login-info {
@@ -43,6 +45,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    border-top-left-radius: 0%;
+    border-bottom-left-radius: 0%;
 }
 
 .info-content {
