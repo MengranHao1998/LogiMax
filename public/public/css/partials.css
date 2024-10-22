@@ -16,8 +16,8 @@
 body {
     display: grid;
     grid-template-areas: 
-    "header header header header header header header header"
-    "aside main main main main main main main";
+    "header header header header header header header"
+    "aside aside main main main main main";
     font-family: sans-serif;
 }
 
