@@ -59,11 +59,13 @@ header {
     margin: auto 0 auto 10px;
 }
 
-#header-account button {
-    height: 30px;
-    padding: 0 20px;
-    margin: auto 0 auto 40px;
+#header-account form {
+    margin: auto 0 auto 2rem;
+}
+
+#header-account input[type="button"] {
     cursor: pointer;
+    padding: 5px 20px;
     border-radius: 5px;
     color: var(--text-color);
     background-color: var(--background-almost-grey);
