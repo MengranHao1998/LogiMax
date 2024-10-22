@@ -1,12 +1,17 @@
 <%- include("partials/login")%>
 <main class="login-container">
     <section class="login-form">
-        <form>
+        <form action="/" method="POST">
             <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Value">
+            <input type="email" name="username" id="email" placeholder="Email">
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Value">
+            <input type="password" name="password" id="password" placeholder="Password">
             <button type="submit">Sign In</button>
+            <% if (typeof invalidCredentials !== 'undefined' && invalidCredentials) { %>
+                <div class="error-popup">
+                    <p class="errormessage">Incorrect username or password.</p>
+                </div>
+            <% } %>
         </form>
     </section>
     <section class="login-info">

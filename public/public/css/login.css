@@ -80,3 +80,8 @@ body {
     cursor: pointer;
     margin-top: 10px;
 }
+
+.errormessage {
+    color: red;
+    padding-top: 1rem;
+}
