@@ -20,14 +20,14 @@
 }
 
 .main section {
-    justify-content: center;
+    justify-content: space-around;
 }
 
 .main .firstrow, .secondrow, .thirdrow {
     display: flex;
     flex-flow: row wrap;
     gap: 3rem;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
 }
 
 /* STATCARDS */
@@ -40,6 +40,7 @@
     border: 1px black solid;
     border-radius: 5%;
     box-shadow: 1px 3px #acb1b6;
+    background-color: #fff;
 }
 
 .firstrow .statcard:nth-child(1) i,.firstrow .statcard:nth-child(2) i {
@@ -87,6 +88,7 @@
     border: 1px solid black;
     text-align: center;
     box-shadow: 1px 3px #acb1b6;
+    background-color: #fff;
 }
 .placeholder canvas {
     width: 100%;  /* Maakt de chart responsief */
@@ -101,7 +103,8 @@ table {
 }
 
 thead th {
-    background-color: #f2f2f2;
+    background-color: var(--logimax-blue);
+    color: #fff;
     padding: 10px;
 }
 
@@ -110,5 +113,5 @@ tbody td {
 }
 
 tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: var(--background-almost-white);
 }
