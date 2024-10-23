@@ -17,9 +17,11 @@ body {
     display: grid;
     grid-template-areas: 
     "header header header header header header header"
-    "aside aside main main main main main";
+    "aside main main main main main main";
+    grid-template-columns: 350px 1fr;
     font-family: sans-serif;
 }
+
 
 a {
     text-decoration: none;
@@ -35,7 +37,7 @@ header {
     grid-area: header;
     background-color: var(--logimax-blue);
     display: flex;
-    padding: 5px 70px 5px 30px;
+    padding: 5px 70px 5px 30px;    
 }
 
 #header-account {
@@ -74,6 +76,7 @@ header {
 /* ASIDE & NAV */
 
 aside {
+    width: 350px;
     grid-area: aside;
     background-color: #fff;
     border-right: var(--border-grey) 2px solid;
