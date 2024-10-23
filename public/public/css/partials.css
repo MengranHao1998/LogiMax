@@ -18,7 +18,7 @@ body {
     grid-template-areas: 
     "header header header header header header header"
     "aside main main main main main main";
-    grid-template-columns: 350px 1fr;
+    grid-template-columns: 300px 1fr;
     font-family: sans-serif;
 }
 
@@ -76,7 +76,6 @@ header {
 /* ASIDE & NAV */
 
 aside {
-    width: 350px;
     grid-area: aside;
     background-color: #fff;
     border-right: var(--border-grey) 2px solid;
