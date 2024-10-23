@@ -9,6 +9,17 @@
     margin-left: auto;
 }
 
+.dropdowns select, .dropdowns input {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #F5F5F5;
+    border-radius: 12px;
+    background-color: #F5F5F5;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    margin-right: 10px;
+}
+
 .main article {
     display: flex;
     flex-direction: column;
