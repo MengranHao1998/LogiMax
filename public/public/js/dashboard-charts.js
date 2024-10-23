@@ -30,7 +30,7 @@ const myChart = new Chart(ctx, {
     }
 });
 
-// MEEST VERKOCHT CHART
+// MEEST VERKOCHT CHART/TABLE
 const products = [
     { id: 'P001', name: 'Product 1', amountSold: 200, totalEarnings: 4000 },
     { id: 'P002', name: 'Product 2', amountSold: 150, totalEarnings: 3000 },
@@ -112,3 +112,69 @@ const Ruimtegebruik = new Chart(doughnutCtx, {
     }
 });
 
+// WERKNEMER PRESTATIES CHART
+const werknemerCtx = document.getElementById('werknemerPrestaties').getContext('2d');
+const werknemerChart = new Chart(werknemerCtx,{
+    type:"bar",
+    data:{
+        labels:['Employee 1','Employee 2','Employee 3','Employee 4','Employee 5','Employee 6','Employee 7'],
+        datasets:[
+            {
+                data: [120, 190, 30, 50, 20, 30, 90],
+                backgroundColor: '#3E3DE0',
+                borderColor: '#1E1E1E',
+                borderWidth: 1
+            }
+        ]
+    },
+    
+});
+
+// VERZENDING EN ONTVANGST CHART
+const verzendingOntvangstCtx = document.getElementById('verzendingOntvangstChart').getContext('2d');
+
+const verzendingOntvangstData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    datasets: [
+        {
+            label: 'Verzending',
+            data: [80, 40, 70, 80, 60, 90], // Example data
+            borderColor: '#3E3DE0', // Blue color for Verzending line
+            backgroundColor: 'transparent',
+            borderWidth: 3,
+            tension: 0.4, // Smooth line
+            pointBorderColor: 'white',
+            pointBackgroundColor: '#3E3DE0',
+            pointRadius: 4,
+        },
+        {
+            label: 'Ontvangst',
+            data: [60, 50, 60, 50, 40, 30], // Example data
+            borderColor: '#3de0c6', // Aqua color for Ontvangst line
+            backgroundColor: 'transparent',
+            borderWidth: 3,
+            tension: 0.4, // Smooth line
+            pointBorderColor: 'white',
+            pointBackgroundColor: '#3de0c6',
+            pointRadius: 4,
+        }
+    ]
+};
+
+const verzendingOntvangstChart = new Chart(verzendingOntvangstCtx, {
+    type: 'line',
+    data: verzendingOntvangstData,
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'right'
+            }
+        }
+    }
+});

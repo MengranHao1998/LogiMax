@@ -23,7 +23,7 @@
             </script>
     </section>
 </section>
-<article class = "processes-page">
+<article >
     <h2>Overview</h2>
     <section class="firstrow">
         <div class="statcard">
@@ -46,13 +46,20 @@
 <article>
     <h2>Verzending en Ontvangst</h2>
     <section class="secondrow">
-        <div class="placeholder">PLACEHOLDER</div>
+        <div class="placeholder">
+            <canvas id="verzendingOntvangstChart" width="400" height="200"></canvas>
+        </div>
     </section>
 </article>
 <article>
     <h2>Werknemersprestaties</h2>
-<section class="thirdrow">
-    <div class="placeholder">PLACEHOLDER</div>
-</section>
+    <section class="thirdrow">
+        <div class="placeholder">
+            <canvas id="werknemerPrestaties" width="400" height="200"></canvas>
+        </div>
+    </section>
 </article>
 <%- include("partials/doc-end")%>
+<!-- CHART SCRIPTS  -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/dashboard-charts.js"></script>
