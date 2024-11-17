@@ -1,5 +1,5 @@
 // Interfaces /employees
-interface Employee {
+export interface Employee {
     employee_id: string;
     warehouse_id: number;
     firstName: string;
@@ -15,7 +15,7 @@ interface Employee {
     | "warehouse_employee";
 
 // Interfaces /orders
-interface Order {
+export interface Order {
     order_id: string;
     warehouse_id: number;
     employee_id: string;
@@ -24,7 +24,7 @@ interface Order {
     products: Product[];
 }
 
-interface Product {
+export interface Product {
     id: string;
     image: string;
     title: string;
@@ -33,14 +33,14 @@ interface Product {
     quantity: number;
 }
 
-interface ProductPrice {
+export interface ProductPrice {
     discountPrice: number;
     actualPrice: number | null;
     currency: string;
 }
 
 // Interfaces /shipments
-interface Shipment {
+export interface Shipment {
     shipment_id: string;
     warehouse_id: number;
     shipment_date: string;
@@ -50,7 +50,7 @@ interface Shipment {
 }
 
 //Interfaces /warehouses
-interface Warehouse {
+export interface Warehouse {
     warehouse_id: number;
     location: string;
     employees: Employee[];
