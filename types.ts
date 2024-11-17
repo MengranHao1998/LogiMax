@@ -58,3 +58,8 @@ export interface Warehouse {
     warehouse_capacity: number;
     space_utilization: number;
 }
+
+export interface Warehouses {
+    date: string;
+    warehouses: Warehouse[];
+}
