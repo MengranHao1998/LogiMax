@@ -1,7 +1,13 @@
 import { Employee, Order, Product, ProductPrice, Shipment, Warehouse } from "./types";
 import { MongoClient, Collection } from "mongodb";
+import dotenv from "dotenv";
 
-const MONGODB_URI = "mongodb+srv://db-admin:logimax@db-warehouses.uym2d.mongodb.net/?retryWrites=true&w=majority&appName=db-warehouses";
+dotenv.config();
+
+const MONGODB_URI = process.env.MONGO_URI;
+if (!MONGODB_URI) {
+    throw new Error("MONGO_URI is not defined in environment variables");
+}
 const client = new MongoClient(MONGODB_URI);
 
 const warehousesCollection: Collection<Warehouse> = client.db("db-warehouses").collection<Warehouse>("warehouses");
@@ -17,7 +23,6 @@ async function fetchDataWarehouses() {
     const data = await response.json();
 
     await warehousesCollection.deleteMany({}); // Telkens verwijderen voor testing's sake
-
     await warehousesCollection.insertMany(data);
 }
 
@@ -26,7 +31,7 @@ async function DBConnect() {
         await client.connect();
         console.log("Successfully connected to the database");
         await fetchDataWarehouses();
-        console.log("Successfully wrote data to db")
+        console.log("Successfully wrote warehouse data to db")
         process.on("SIGINT", DBExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
