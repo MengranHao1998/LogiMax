@@ -1,55 +1,60 @@
+// Interfaces /employees
+interface Employee {
+    employee_id: string;
+    warehouse_id: number;
+    firstName: string;
+    lastName: string;
+    startDate: string;
+    department: Department;
+    birthDate: string; 
+  }
+  
+  type Department = // Union type var, department is 1 van deze 3 mogelijkheden
+    | "warehouse_manager"
+    | "hr_manager"
+    | "warehouse_employee";
+
+// Interfaces /orders
+interface Order {
+    order_id: string;
+    warehouse_id: number;
+    employee_id: string;
+    order_date: string;
+    delivery_deadline: string;
+    products: Product[];
+}
+
 interface Product {
-    product_id: number;
-    name: string;
-    stock: number;
-    min_stock_level: number;
-    max_stock_level: number;
-    turnover_rate: number;
-}
-
-interface EmployeeProductivity {
-    employee_id: number;
-    name: string;
-    orders_processed: number;
-}
-
-interface ShipmentProduct {
-    product_id: number;
+    id: string;
+    image: string;
+    title: string;
+    link: string;
+    price: ProductPrice;
     quantity: number;
 }
 
-interface Shipment {
-    shipment_id: number;
-    shipment_date: string; // ISO date string
-    incoming: boolean;
-    order_ids?: number[]; // Optional as it may be absent in some shipments
-    products: ShipmentProduct[];
+interface ProductPrice {
+    discountPrice: number;
+    actualPrice: number | null;
+    currency: string;
 }
 
+// Interfaces /shipments
+interface Shipment {
+    shipment_id: string;
+    warehouse_id: number;
+    shipment_date: string;
+    type: "incoming" | "outgoing"; // Union type
+    order_ids: string[];
+    products: Product[];
+}
+
+//Interfaces /warehouses
 interface Warehouse {
     warehouse_id: number;
     location: string;
+    employees: Employee[];
     products: Product[];
+    warehouse_capacity: number;
     space_utilization: number;
-    employee_productivity: EmployeeProductivity[];
-    shipments: Shipment[];
-}
-
-interface OrderProduct {
-    product_id: number;
-    quantity: number;
-}
-
-interface Order {
-    order_id: number;
-    order_date: string; // ISO date string
-    delivery_deadline: string; // ISO date string
-    status: string;
-    shipment_id: number;
-    products: OrderProduct[];
-}
-
-interface InventoryData {
-    warehouses: Warehouse[];
-    orders: Order[];
 }
