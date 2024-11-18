@@ -98,14 +98,14 @@ async function DBConnect() {
     try {
         await client.connect();
         console.log("Successfully connected to the database");
-        /*await fetchWarehouses();
+        await fetchWarehouses();
         console.log("Successfully wrote warehouse data to db");
         await fetchShipments();
         console.log("Successfully wrote shipments data to db");
         await fetchOrders();
         console.log("Successfully wrote orders data to db");
         await fetchEmployees();
-        console.log("Successfully wrote employees data to db");*/
+        console.log("Successfully wrote employees data to db");
         await test(); // TESTING PURPOSES
         console.log("test successfull"); // TESTING PURPOSES
         process.on("SIGINT", DBExit); // Ctrl + C handling
