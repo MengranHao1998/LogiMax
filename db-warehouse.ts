@@ -52,8 +52,6 @@ async function fetchWarehouses() {
         }
     });
     const data = await response.json();
-
-    await warehousesCollection.deleteMany({}); // Telkens verwijderen voor testing's sake
     await warehousesCollection.insertMany(data);
 }
 
@@ -67,7 +65,6 @@ async function fetchShipments() {
     });
     const data = await response.json();
 
-    await shipmentsCollection.deleteMany({}); // Telkens verwijderen voor testing's sake
     await shipmentsCollection.insertMany(data);
 }
 
@@ -81,7 +78,6 @@ async function fetchOrders() {
     });
     const data = await response.json();
 
-    await ordersCollection.deleteMany({}); // Telkens verwijderen voor testing's sake
     await ordersCollection.insertMany(data);
 }
 
@@ -95,7 +91,6 @@ async function fetchEmployees() {
     });
     const data = await response.json();
 
-    await employeesCollection.deleteMany({}); // Telkens verwijderen voor testing's sake
     await employeesCollection.insertMany(data);
 }
 
