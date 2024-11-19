@@ -35,7 +35,7 @@ app.get("/",(req,res)=>{
   res.render("login",{activePage: "login"});
 })
 
-// Login logica
+/*// Login logica
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -64,7 +64,7 @@ app.post('/', (req, res) => {
   } else {
     res.render('login', { invalidCredentials: true });
   }
-});
+});*/
 
 // renderen pagina INDEX
 app.get('/home', async (req, res) => {
