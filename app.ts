@@ -2,6 +2,10 @@ import express from "express";
 import { Employee, Order, Shipment, Warehouse, Warehouses } from "./types";
 import { MongoClient, Collection } from "mongodb";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import { loginUser, getUserByUsername } from "./db-users";
+import { User } from "./types";
 const app = express();
 
 app.set("view engine", "ejs");
@@ -23,12 +27,30 @@ const warehousesCollection: Collection<Warehouse> = client.db("db-warehouses").c
 const shipmentsCollection: Collection<Shipment> = client.db("db-warehouses").collection<Shipment>("shipments");
 const ordersCollection: Collection<Order> = client.db("db-warehouses").collection<Order>("orders");
 const employeesCollection: Collection<Employee> = client.db("db-warehouses").collection<Employee>("employees");
+const usersCollection: Collection<User> = client.db("logimax-cluster").collection("users");
 
 // renderen pagina LOGIN
 app.get("/",(req,res)=>{
   res.render("login",{activePage: "login"});
 })
 
+// Login logica
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+      // Roep loginUser aan om te authenticeren en een JWT te genereren
+      const token = await loginUser(username, password);
+
+      // Verzend de token als een HTTP-Only cookie
+      res.cookie("auth_token", token, { httpOnly: true, secure: true, sameSite: "strict" });
+
+      // Redirect naar de homepagina na succesvolle login
+      res.redirect("/home");
+  } catch (error) {
+      res.status(401).render("login", { invalidCredentials: true }); // Toon foutmelding bij mislukte login
+  }
+});
 // test user
 app.post('/', (req, res) => {
   const { username, password } = req.body;
@@ -73,5 +95,6 @@ app.get('/home', (req, res) => {
   const chartData = [0]; // Example data
   res.render('index', { chartData });
 });
+
 
 export {app};

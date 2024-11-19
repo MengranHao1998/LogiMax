@@ -63,3 +63,10 @@ export interface Warehouses {
     date: string;
     warehouses: Warehouse[];
 }
+// Interfaces /users
+export interface User {
+    username: string;          // Unieke gebruikersnaam
+    password: string;          // Gehasht wachtwoord
+    role: "CEO" | "TeamLeader"; // Rol van de gebruiker
+    accessibleWarehouses: number[]; // Lijst van toegankelijke warehouse_ids
+}
