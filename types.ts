@@ -9,6 +9,11 @@ export interface Employee {
     birthDate: string; 
   }
   
+  export interface Employees {
+    date: string;
+    employees: Employee[];
+}
+
   type Department = // Union type var, department is 1 van deze 3 mogelijkheden
     | "warehouse_manager"
     | "hr_manager"
@@ -22,6 +27,11 @@ export interface Order {
     order_date: string;
     delivery_deadline: string;
     products: Product[];
+}
+
+export interface Orders {
+    date: string;
+    orders: Order[];
 }
 
 export interface Product {
@@ -47,6 +57,11 @@ export interface Shipment {
     type: "incoming" | "outgoing"; // Union type
     order_ids: string[];
     products: Product[];
+}
+
+export interface Shipments {
+    date: string;
+    shipments: Shipment[];
 }
 
 //Interfaces /warehouses

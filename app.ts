@@ -1,6 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Warehouses } from "./types";
 import { MongoClient, Collection } from "mongodb";
+import { countOrders, getWarehouses, countDelayedOrders } from "./db-warehouse";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -17,7 +18,7 @@ app.use(express.urlencoded({ extended:true}))
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGO_URI;
+/*const MONGODB_URI = process.env.MONGO_URI;
 if (!MONGODB_URI) {
     throw new Error("MONGO_URI is not defined in environment variables");
 }
@@ -27,7 +28,7 @@ const warehousesCollection: Collection<Warehouse> = client.db("db-warehouses").c
 const shipmentsCollection: Collection<Shipment> = client.db("db-warehouses").collection<Shipment>("shipments");
 const ordersCollection: Collection<Order> = client.db("db-warehouses").collection<Order>("orders");
 const employeesCollection: Collection<Employee> = client.db("db-warehouses").collection<Employee>("employees");
-const usersCollection: Collection<User> = client.db("logimax-cluster").collection("users");
+const usersCollection: Collection<User> = client.db("logimax-cluster").collection("users");*/
 
 // renderen pagina LOGIN
 app.get("/",(req,res)=>{
@@ -68,16 +69,31 @@ app.post('/', (req, res) => {
 // renderen pagina INDEX
 app.get('/home', async (req, res) => {
 
-  const totalOrders = await ordersCollection.countDocuments({"warehouse_id": 1}); // Total orders van het New York warehouse
-  const delayedOrders = await ordersCollection.countDocuments({"warehouse_id": 1,
-    $expr: { $eq: ["$order_date", "$delivery_deadline"] }
-}); 
-  const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
-  const spaceUtilization = Math.round(((await warehousesCollection.findOne({ "warehouse_id": 1 }))?.space_utilization || 0) * 100);
+  const warehouses = await getWarehouses("19-11-2024");
+  console.log(warehouses);
 
-  res.render('index', { activePage: 'home', stats: {
-    totalOrders,
-    delayedOrders, onTimePercentage, spaceUtilization} }); // activePage => voor gebruik nav item
+  const totalOrders = await countOrders("19-11-2024", 1);
+  console.log(totalOrders);
+  
+  /*const delayedOrders = await ordersCollection.countDocuments({"warehouse_id": 1,
+    $expr: { $eq: ["$order_date", "$delivery_deadline"] }
+}); */
+
+  const delayedOrders = await countDelayedOrders("19-11-2024", 1);
+  const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
+  const spaceUtilization = Math.round((warehouses?.warehouses[0].space_utilization || 0) * 100);
+  //const spaceUtilization = Math.round(((await warehousesCollection.findOne({ "warehouse_id": 1 }))?.space_utilization || 0) * 100);
+
+  res.render('index', {
+    activePage: 'home',
+    warehouses,
+    stats: {
+      totalOrders,
+      delayedOrders,
+      onTimePercentage,
+      spaceUtilization
+    }
+  }); // activePage => voor gebruik nav item
 });
 
 // renderen pagina VOORRAAD

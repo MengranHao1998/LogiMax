@@ -1,4 +1,4 @@
-import { Employee, Order, Shipment, Warehouse, Warehouses } from "./types";
+import { Employees, Orders, Shipments, Warehouses, Warehouse, Order } from "./types";
 import { MongoClient, Collection } from "mongodb";
 import dotenv from "dotenv";
 
@@ -10,37 +10,56 @@ if (!MONGODB_URI) {
 }
 const client = new MongoClient(MONGODB_URI);
 
-// TESTING PURPOSES
-const testCollection: Collection<Warehouses> = client.db("db-warehouses").collection<Warehouses>("test-warehouses");
+export const warehousesCollection: Collection<Warehouses> = client.db("db-warehouses").collection<Warehouses>("warehouses");
+export const shipmentsCollection: Collection<Shipments> = client.db("db-warehouses").collection<Shipments>("shipments");
+export const ordersCollection: Collection<Orders> = client.db("db-warehouses").collection<Orders>("orders");
+export const employeesCollection: Collection<Employees> = client.db("db-warehouses").collection<Employees>("employees");
 
-const warehousesCollection: Collection<Warehouse> = client.db("db-warehouses").collection<Warehouse>("warehouses");
-const shipmentsCollection: Collection<Shipment> = client.db("db-warehouses").collection<Shipment>("shipments");
-const ordersCollection: Collection<Order> = client.db("db-warehouses").collection<Order>("orders");
-const employeesCollection: Collection<Employee> = client.db("db-warehouses").collection<Employee>("employees");
+// WAREHOUSES FUNCTIES
+export async function getWarehouses(date: string) {
+    return await warehousesCollection.findOne<Warehouses>({date: date});
+}
 
-// TESTING PURPOSES
-async function test() {
-    const response = await fetch("https://logimax-api.onrender.com/warehouses/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": "logimax-admin"
+// ORDERS
+export async function getOrders(date: string) {
+    return await ordersCollection.findOne<Orders>({date: date});
+}
+
+export async function countOrders(date: string, warehouse_id: number) {
+    const allOrders = await getOrders(date);
+    let sumOfOrders: number = 0;
+
+    if (!allOrders || !allOrders.orders) {
+        return sumOfOrders; // Return 0 if there are no orders
+    }
+
+    for (let order of allOrders.orders) {
+        if (order.warehouse_id === warehouse_id) {
+            sumOfOrders++;
         }
-    });
-    const data = await response.json();
-
-    const date: Date = new Date();
-    const day: string = date.getDate().toString();
-    const month: string = (date.getMonth() + 1).toString();
-    const year: string = date.getFullYear().toString();
-    const formattedDate: string = `${day}-${month}-${year}`;
-
-    let test: Warehouses = {
-        date: formattedDate,
-        warehouses: data
     }
     
-    await testCollection.insertOne(test);
+    return sumOfOrders;
+}
+
+export async function countDelayedOrders(date: string, warehouse_id: number) {
+    const allOrders = await getOrders(date);
+    let sumOfDelayedOrders: number = 0;
+
+    if (!allOrders || !allOrders.orders) {
+        return sumOfDelayedOrders; // Return 0 if there are no orders
+    }
+
+    for (let order of allOrders.orders) {
+        if (order.warehouse_id === warehouse_id) {
+            if (order.order_date === order.delivery_deadline) {
+                sumOfDelayedOrders++;
+            }
+        }
+        
+    }
+    
+    return sumOfDelayedOrders;
 }
 
 async function fetchWarehouses() {
@@ -94,7 +113,7 @@ async function fetchEmployees() {
     await employeesCollection.insertMany(data);
 }
 
-async function DBConnect() {
+export async function PushToDatabase() {
     try {
         await client.connect();
         console.log("Successfully connected to the database");
@@ -106,8 +125,16 @@ async function DBConnect() {
         console.log("Successfully wrote orders data to db");
         await fetchEmployees();
         console.log("Successfully wrote employees data to db");
-        await test(); // TESTING PURPOSES
-        console.log("test successfull"); // TESTING PURPOSES
+        process.on("SIGINT", DBExit); // Ctrl + C handling
+    } catch (e) {
+        console.error("Error connecting to the database:", e);
+    }
+}
+
+export async function DBConnect() {
+    try {
+        await client.connect();
+        console.log("Successfully connected to the database");
         process.on("SIGINT", DBExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
@@ -123,5 +150,3 @@ async function DBExit() {
     }
     process.exit(0);
 }
-
-DBConnect();
