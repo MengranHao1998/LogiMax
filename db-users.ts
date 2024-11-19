@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 
 dotenv.config();
 
-// MongoDB-instellingen
 const MONGO_USER_URI = process.env.MONGO_USER_URI;
 if (!MONGO_USER_URI) {
     throw new Error("MONGO_USER_URI is not defined in environment variables");
@@ -17,7 +16,7 @@ const usersCollection: Collection = client.db("logimax-cluster").collection("use
 
 // Functie om een gebruiker aan te maken
 async function createUser(username: string, password: string, role: "CEO" | "TeamLeader", accessibleWarehouses: number[]) {
-    const hashedPassword = await bcrypt.hash(password, 10); // Wachtwoord hashen
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = {
         username,
@@ -121,7 +120,7 @@ async function loginUser(username: string, password: string) {
     }
 }
 
-// Verbind met de database en voer de fetch-functie uit
+// Database connectie
 async function DBConnect() {
     try {
         await client.connect();
@@ -135,7 +134,7 @@ async function DBConnect() {
     }
 }
 
-// Functie om de verbinding te sluiten wanneer de app wordt afgesloten
+// verbinding sluiten wanneer de app wordt afgesloten
 async function DBExit() {
     try {
         await client.close();
@@ -146,7 +145,6 @@ async function DBExit() {
     process.exit(0);
 }
 
-// Voer de DBConnect uit om de verbinding te maken en de gegevens te verwerken
 DBConnect();
 
 export { createUser, fetchWarehousesAndCreateUsers, getUserByUsername, loginUser, DBConnect, DBExit };
