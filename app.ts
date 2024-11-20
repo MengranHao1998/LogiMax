@@ -169,13 +169,12 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
 app.get('/processes',secureMiddleware, async (req, res) => {
   const user = res.locals.user;
 
-  let warehouseId = user.accessibleWarehouses[0];
-
+  let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
+  warehouseId = parseInt(warehouseId as string, 10);
+  
   const warehouses = await getWarehouses("19-11-2024");
-  console.log(warehouses);
 
   const totalOrders = await countOrders("19-11-2024", warehouseId);
-  console.log(totalOrders);
   
   /*const delayedOrders = await ordersCollection.countDocuments({"warehouse_id": 1,
     $expr: { $eq: ["$order_date", "$delivery_deadline"] }
