@@ -1,13 +1,15 @@
-import jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from "express";
+import * as jwt from "jsonwebtoken";
 
-export function authenticateToken(req, res, next) {
-    const token = req.cookies.auth_token;
-    if (!token) return res.redirect('/');
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'defaultSecretKey');
-        req.user = decoded; 
-        next(); 
-    } catch {
-        res.redirect('/'); 
-    }
-}
+export function secureMiddleware(req: Request, res: Response, next: NextFunction) {
+    let token : string = req.cookies.auth_token;
+    jwt.verify(token, process.env.JWT_SECRET!, (err, user) => {
+        if (err) {
+            res.redirect("/login");
+        } else {
+            console.log(user);
+            res.locals.user = user;
+            next();
+        }
+    });
+};

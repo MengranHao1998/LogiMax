@@ -12,20 +12,19 @@ if (!MONGO_USER_URI) {
 }
 
 const client = new MongoClient(MONGO_USER_URI);
-const usersCollection: Collection = client.db("logimax-cluster").collection("users");
+const usersCollection: Collection = client.db("logimax").collection("users");
+
+async function clearUsers() {
+    await usersCollection.deleteMany({});
+    console.log("All users cleared from the database.");
+}
 
 // Functie om een gebruiker aan te maken
 async function createUser(username: string, password: string, role: "CEO" | "TeamLeader", accessibleWarehouses: number[]) {
-    const existingUser = await usersCollection.findOne({ username });
-    if (existingUser) {
-        console.log(`User ${username} already exists. Skipping creation.`);
-        return;
-    }
 
     if (!username || !password) {
         throw new Error("Username and password are required");
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = {
@@ -60,7 +59,9 @@ async function fetchWarehousesAndCreateUsers() {
 
         const warehouses = await response.json();
 
-        await createUser("ceo@logimax.com", "password123", "CEO", warehouses.map((wh: any) => wh.warehouse_id));
+        await clearUsers();
+
+        await createUser("jannespeeters@logimax.com", "password123", "CEO", warehouses.map((wh: any) => wh.warehouse_id));
 
         for (const warehouse of warehouses) {
             const teamLeader = warehouse.employees.find(
@@ -95,7 +96,7 @@ async function getUserByUsername(username: string) {
         return user;
     } catch (error) {
         console.error(`Error retrieving user with username ${username}:`, error);
-        throw new Error("Unable to retrieve user");
+        throw error;
     }
 }
 

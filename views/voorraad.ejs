@@ -7,11 +7,14 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <section class="menu">
-    <h1>New York/Los Angeles</h1>
+    <h1><%= stats.location %></h1>
     <section class="dropdowns">
-        <select name="location" id="location">
-            <option value="New York">New York</option>
-            <option value="Los Angeles">Los Angeles</option>
+        <select name="location" id="location" <% if (user.role === 'TeamLeader') { %> style="display: none;" <% } %>>
+            <% for (let w of warehouses.warehouses) { %>
+                <option value="<%= w.location %>"><%= w.location %></option> 
+            <% } %>
+            <!--<option value="New York">New York</option>
+            <option value="Los Angeles">Los Angeles</option>-->
         </select>
         <input type="text" name="date" id="date" placeholder="Selecteer Datum" />
             <script>
