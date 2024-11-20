@@ -131,11 +131,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
 app.get('/voorraad', secureMiddleware, async(req, res) => {
   const user = res.locals.user;
 
-  let warehouseId = user.accessibleWarehouses[0];
-
-  if (user.role === 'CEO') {
-    warehouseId = req.query.warehouse_id || 1;
-  }
+  let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
+  warehouseId = parseInt(warehouseId as string, 10);
 
   const warehouses = await getWarehouses("19-11-2024");
   console.log(warehouses);
@@ -165,7 +162,7 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
       spaceUtilization,
       location
     }
-  }); 
+  }); // activePage => voor gebruik nav item
 });
 
 // renderen pagina PROCESSES
