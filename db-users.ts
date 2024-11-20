@@ -16,6 +16,16 @@ const usersCollection: Collection = client.db("logimax-cluster").collection("use
 
 // Functie om een gebruiker aan te maken
 async function createUser(username: string, password: string, role: "CEO" | "TeamLeader", accessibleWarehouses: number[]) {
+    const existingUser = await usersCollection.findOne({ username });
+    if (existingUser) {
+        console.log(`User ${username} already exists. Skipping creation.`);
+        return;
+    }
+
+    if (!username || !password) {
+        throw new Error("Username and password are required");
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = {
@@ -29,13 +39,13 @@ async function createUser(username: string, password: string, role: "CEO" | "Tea
     console.log(`User ${username} created successfully.`);
 }
 
+
 // Functie om warehouses op te halen en gebruikers te genereren
 async function fetchWarehousesAndCreateUsers() {
     const API_URL = "https://logimax-api.onrender.com/warehouses/";
     const API_KEY = "logimax-admin";
 
     try {
-        // API-aanroep
         const response = await fetch(API_URL, {
             method: "GET",
             headers: {
@@ -50,10 +60,8 @@ async function fetchWarehousesAndCreateUsers() {
 
         const warehouses = await response.json();
 
-        // CEO toevoegen (overzicht over alle warehouses)
         await createUser("ceo@logimax.com", "password123", "CEO", warehouses.map((wh: any) => wh.warehouse_id));
 
-        // Teamleiders toevoegen
         for (const warehouse of warehouses) {
             const teamLeader = warehouse.employees.find(
                 (employee: any) => employee.department === "warehouse_manager"
@@ -72,33 +80,41 @@ async function fetchWarehousesAndCreateUsers() {
     }
 }
 
+
 // Functie om gebruiker op te halen op basis van username
 async function getUserByUsername(username: string) {
     try {
+        if (!username) throw new Error("Username is required");
+        
         const user = await usersCollection.findOne({ username });
+        if (!user) {
+            console.error(`User ${username} not found.`);
+            return null;
+        }
+
         return user;
     } catch (error) {
-        console.error("Error retrieving user:", error);
+        console.error(`Error retrieving user with username ${username}:`, error);
         throw new Error("Unable to retrieve user");
     }
 }
 
+
 // Functie voor login: Verifieer de gebruikersnaam en wachtwoord, en genereer een JWT-token
 async function loginUser(username: string, password: string) {
     try {
-        // Haal gebruiker op uit de database
         const user = await getUserByUsername(username);
         if (!user) {
-            throw new Error("User not found");
+            console.error("Login failed: User not found");
+            throw new Error("Invalid username or password");
         }
 
-        // Controleer of het ingevoerde wachtwoord correct is
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (!isPasswordCorrect) {
-            throw new Error("Invalid password");
+            console.error("Login failed: Incorrect password");
+            throw new Error("Invalid username or password");
         }
 
-        // Genereer een JWT-token
         const token = jwt.sign(
             {
                 username: user.username,
@@ -110,15 +126,12 @@ async function loginUser(username: string, password: string) {
         );
 
         return token;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Login error:", error.message);
-        } else {
-            console.error("Unknown error occurred during login.");
-        }
-        throw new Error("Authentication failed");
+    } catch (error) {
+        console.error("Authentication error:", error);
+        throw new Error("Authentication failed. Please try again.");
     }
 }
+
 
 // Database connectie
 async function DBConnect() {

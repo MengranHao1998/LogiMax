@@ -3,6 +3,7 @@ import { Employee, Order, Shipment, Warehouse, Warehouses } from "./types";
 import { MongoClient, Collection } from "mongodb";
 import { countOrders, getWarehouses, countDelayedOrders } from "./db-warehouse";
 import dotenv from "dotenv";
+import {authenticateToken} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { loginUser, getUserByUsername } from "./db-users";
@@ -97,17 +98,17 @@ app.get('/home', async (req, res) => {
 });
 
 // renderen pagina VOORRAAD
-app.get('/voorraad', (req, res) => {
+app.get('/voorraad', authenticateToken,(req, res) => {
   res.render('voorraad', { activePage: 'voorraad' });
 });
 
 // renderen pagina PROCESSES
-app.get('/processes', (req, res) => {
+app.get('/processes',authenticateToken, (req, res) => {
   res.render('processes', { activePage: 'processes' });
 });
 
 // renderen chart INDEX
-app.get('/home', (req, res) => {
+app.get('/home',authenticateToken, (req, res) => {
   const chartData = [0]; // Example data
   res.render('index', { chartData });
 });
