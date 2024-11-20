@@ -6,12 +6,20 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    function changeWarehouse() {
+      const selectedWarehouse = document.getElementById('location').value;
+      window.location.href = `/voorraad?warehouseId=${selectedWarehouse}`;
+    }
+  </script>
 <section class="menu">
     <h1><%= stats.location %></h1>
     <section class="dropdowns">
-        <select name="location" id="location" <% if (user.role === 'TeamLeader') { %> style="display: none;" <% } %>>
+        <select name="location" id="location" onchange="changeWarehouse()" <% if (user.role === 'TeamLeader') { %> style="display: none;" <% } %>>
             <% for (let w of warehouses.warehouses) { %>
-                <option value="<%= w.location %>"><%= w.location %></option> 
+                <option value="<%= w.warehouse_id %>" <%= warehouseId == w.warehouse_id ? 'selected' : '' %> >
+                    <%= w.location %>
+                  </option>
             <% } %>
             <!--<option value="New York">New York</option>
             <option value="Los Angeles">Los Angeles</option>-->
