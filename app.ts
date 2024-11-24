@@ -1,7 +1,7 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse, Warehouses } from "./types";
+import { Employee, Order, Shipment, Warehouse } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, getWarehouses, countDelayedOrders } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -20,18 +20,6 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended:true}))
 
 dotenv.config();
-
-/*const MONGODB_URI = process.env.MONGO_URI;
-if (!MONGODB_URI) {
-    throw new Error("MONGO_URI is not defined in environment variables");
-}
-const client = new MongoClient(MONGODB_URI);
-
-const warehousesCollection: Collection<Warehouse> = client.db("db-warehouses").collection<Warehouse>("warehouses");
-const shipmentsCollection: Collection<Shipment> = client.db("db-warehouses").collection<Shipment>("shipments");
-const ordersCollection: Collection<Order> = client.db("db-warehouses").collection<Order>("orders");
-const employeesCollection: Collection<Employee> = client.db("db-warehouses").collection<Employee>("employees");
-const usersCollection: Collection<User> = client.db("logimax-cluster").collection("users");*/
 
 // renderen pagina LOGIN
 app.get("/",(req,res)=>{
@@ -74,19 +62,6 @@ app.post("/login", async (req, res) => {
       res.status(500).render("login", { invalidCredentials: true });
   }
 });
-/*// test user
-app.post('/', (req, res) => {
-  const { username, password } = req.body;
-
-  const correctUsername = 'JannesPeeters@Logimax.com';
-  const correctPassword = 'WPL';
-
-  if (username === correctUsername && password === correctPassword) {
-      res.redirect('/home');
-  } else {
-    res.render('login', { invalidCredentials: true });
-  }
-});*/
 
 // renderen pagina INDEX
 app.get('/home', secureMiddleware, async (req, res) => {
@@ -96,21 +71,13 @@ app.get('/home', secureMiddleware, async (req, res) => {
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
 
-  const warehouses = await getWarehouses("19-11-2024");
-  console.log(warehouses);
+  const warehouses = await fetchWarehouses();
+  const totalOrders = await countOrders("24-11-2024", warehouseId);
 
-  const totalOrders = await countOrders("19-11-2024", warehouseId);
-  console.log(totalOrders);
-  
-  /*const delayedOrders = await ordersCollection.countDocuments({"warehouse_id": 1,
-    $expr: { $eq: ["$order_date", "$delivery_deadline"] }
-}); */
-
-  const delayedOrders = await countDelayedOrders("19-11-2024", warehouseId);
+  const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
-  const spaceUtilization = Math.round((warehouses?.warehouses[warehouseId - 1].space_utilization || 0) * 100);
-  const location = warehouses?.warehouses[warehouseId - 1].location;
-  //const spaceUtilization = Math.round(((await warehousesCollection.findOne({ "warehouse_id": accessibleWarehouses }))?.space_utilization || 0) * 100);
+  const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
+  const location = warehouses[warehouseId - 1].location;
 
   res.render('index', {
     activePage: 'home',
@@ -134,21 +101,13 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
 
-  const warehouses = await getWarehouses("19-11-2024");
-  console.log(warehouses);
+  const warehouses = await fetchWarehouses();
+  const totalOrders = await countOrders("24-11-2024", warehouseId);
 
-  const totalOrders = await countOrders("19-11-2024", warehouseId);
-  console.log(totalOrders);
-  
-  /*const delayedOrders = await ordersCollection.countDocuments({"warehouse_id": 1,
-    $expr: { $eq: ["$order_date", "$delivery_deadline"] }
-}); */
-
-  const delayedOrders = await countDelayedOrders("19-11-2024", warehouseId);
+  const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
-  const spaceUtilization = Math.round((warehouses?.warehouses[warehouseId - 1].space_utilization || 0) * 100);
-  const location = warehouses?.warehouses[warehouseId - 1].location;
-  //const spaceUtilization = Math.round(((await warehousesCollection.findOne({ "warehouse_id": accessibleWarehouses }))?.space_utilization || 0) * 100);
+  const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
+  const location = warehouses[warehouseId - 1].location;
 
   res.render('voorraad', {
     activePage: 'voorraad',
@@ -172,19 +131,13 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
   
-  const warehouses = await getWarehouses("19-11-2024");
+  const warehouses = await fetchWarehouses();
+  const totalOrders = await countOrders("24-11-2024", warehouseId);
 
-  const totalOrders = await countOrders("19-11-2024", warehouseId);
-  
-  /*const delayedOrders = await ordersCollection.countDocuments({"warehouse_id": 1,
-    $expr: { $eq: ["$order_date", "$delivery_deadline"] }
-}); */
-
-  const delayedOrders = await countDelayedOrders("19-11-2024", warehouseId);
+  const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
-  const spaceUtilization = Math.round((warehouses?.warehouses[warehouseId - 1].space_utilization || 0) * 100);
-  const location = warehouses?.warehouses[warehouseId - 1].location;
-  //const spaceUtilization = Math.round(((await warehousesCollection.findOne({ "warehouse_id": accessibleWarehouses }))?.space_utilization || 0) * 100);
+  const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
+  const location = warehouses[warehouseId - 1].location;
 
   res.render('processes', {
     activePage: 'processes',

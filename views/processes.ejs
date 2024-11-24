@@ -16,7 +16,7 @@
     <h1><%= stats.location %></h1>
     <section class="dropdowns">
         <select name="location" id="location" onchange="changeWarehouse()" <% if (user.role === 'TeamLeader') { %> style="display: none;" <% } %>>
-            <% for (let w of warehouses.warehouses) { %>
+            <% for (let w of warehouses) { %>
                 <option value="<%= w.warehouse_id %>" <%= warehouseId == w.warehouse_id ? 'selected' : '' %> >
                     <%= w.location %>
                   </option>

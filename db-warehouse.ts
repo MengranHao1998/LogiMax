@@ -1,4 +1,4 @@
-import { Employees, Orders, Shipments, Warehouses, Warehouse, Order } from "./types";
+import { Employee, Order, Shipment, Warehouse } from "./types";
 import { MongoClient, Collection } from "mongodb";
 import dotenv from "dotenv";
 
@@ -10,30 +10,24 @@ if (!MONGODB_URI) {
 }
 const client = new MongoClient(MONGODB_URI);
 
-export const warehousesCollection: Collection<Warehouses> = client.db("db-warehouses").collection<Warehouses>("warehouses");
-export const shipmentsCollection: Collection<Shipments> = client.db("db-warehouses").collection<Shipments>("shipments");
-export const ordersCollection: Collection<Orders> = client.db("db-warehouses").collection<Orders>("orders");
-export const employeesCollection: Collection<Employees> = client.db("db-warehouses").collection<Employees>("employees");
-
-// WAREHOUSES FUNCTIES
-export async function getWarehouses(date: string) {
-    return await warehousesCollection.findOne<Warehouses>({date: date});
-}
+export const shipmentsCollection: Collection<Shipment> = client.db("db-warehouses").collection<Shipment>("shipments");
+export const ordersCollection: Collection<Order> = client.db("db-warehouses").collection<Order>("orders");
+export const employeesCollection: Collection<Employee> = client.db("db-warehouses").collection<Employee>("employees");
 
 // ORDERS
 export async function getOrders(date: string) {
-    return await ordersCollection.findOne<Orders>({date: date});
+    return await ordersCollection.find<Order>({order_date: date}).toArray();
 }
 
 export async function countOrders(date: string, warehouse_id: number) {
-    const allOrders = await getOrders(date);
+    const allOrders: Order[] = await getOrders(date);
     let sumOfOrders: number = 0;
 
-    if (!allOrders || !allOrders.orders) {
+    if (!allOrders) {
         return sumOfOrders; // Return 0 if there are no orders
     }
 
-    for (let order of allOrders.orders) {
+    for (let order of allOrders) {
         if (order.warehouse_id === warehouse_id) {
             sumOfOrders++;
         }
@@ -43,26 +37,25 @@ export async function countOrders(date: string, warehouse_id: number) {
 }
 
 export async function countDelayedOrders(date: string, warehouse_id: number) {
-    const allOrders = await getOrders(date);
+    const allOrders: Order[] = await getOrders(date);
     let sumOfDelayedOrders: number = 0;
 
-    if (!allOrders || !allOrders.orders) {
+    if (!allOrders) {
         return sumOfDelayedOrders; // Return 0 if there are no orders
     }
 
-    for (let order of allOrders.orders) {
+    for (let order of allOrders) {
         if (order.warehouse_id === warehouse_id) {
             if (order.order_date === order.delivery_deadline) {
                 sumOfDelayedOrders++;
             }
-        }
-        
+        }        
     }
     
     return sumOfDelayedOrders;
 }
 
-async function fetchWarehouses() {
+export async function fetchWarehouses() {
     const response = await fetch("https://logimax-api.onrender.com/warehouses/", {
         method: "GET",
         headers: {
@@ -71,7 +64,7 @@ async function fetchWarehouses() {
         }
     });
     const data = await response.json();
-    await warehousesCollection.insertMany(data);
+    return data;
 }
 
 async function fetchShipments() {
@@ -100,31 +93,35 @@ async function fetchOrders() {
     await ordersCollection.insertMany(data);
 }
 
-async function fetchEmployees() {
-    const response = await fetch("https://logimax-api.onrender.com/employees/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": "logimax-admin"
-        }
-    });
-    const data = await response.json();
-
-    await employeesCollection.insertMany(data);
+async function fetchEmployees() {    
+    if (await employeesCollection.countDocuments() === 0) {
+        const response = await fetch("https://logimax-api.onrender.com/employees/", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "authorization": "logimax-admin"
+            }
+        });
+        const data = await response.json();
+        await employeesCollection.insertMany(data);
+        console.log("Successfully wrote employees data to db");
+    }
+    else {
+        console.log("Employee data already found. No additional employee data written to db.");
+    }
 }
 
 export async function PushToDatabase() {
     try {
         await client.connect();
         console.log("Successfully connected to the database");
-        await fetchWarehouses();
+        /*await fetchWarehouses();
         console.log("Successfully wrote warehouse data to db");
         await fetchShipments();
         console.log("Successfully wrote shipments data to db");
         await fetchOrders();
-        console.log("Successfully wrote orders data to db");
-        await fetchEmployees();
-        console.log("Successfully wrote employees data to db");
+        console.log("Successfully wrote orders data to db");*/
+        await fetchEmployees();        
         process.on("SIGINT", DBExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
