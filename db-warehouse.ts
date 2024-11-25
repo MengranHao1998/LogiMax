@@ -78,6 +78,11 @@ async function fetchShipments() {
     const data = await response.json();
 
     await shipmentsCollection.insertMany(data);
+    console.log("Successfully wrote shipments data to db");
+
+    const s = await shipmentsCollection.find<Order>({}).toArray();
+    const sl = await shipmentsCollection.countDocuments();
+    console.log(s[sl - 1]);
 }
 
 async function fetchOrders() {
@@ -91,6 +96,11 @@ async function fetchOrders() {
     const data = await response.json();
 
     await ordersCollection.insertMany(data);
+    console.log("Successfully wrote orders data to db");
+
+    const o = await ordersCollection.find<Order>({}).toArray();
+    const ol = await ordersCollection.countDocuments();
+    console.log(o[ol - 1]);
 }
 
 async function fetchEmployees() {    
@@ -115,30 +125,26 @@ export async function PushToDatabase() {
     try {
         await client.connect();
         console.log("Successfully connected to the database");
-        /*await fetchWarehouses();
-        console.log("Successfully wrote warehouse data to db");
-        await fetchShipments();
-        console.log("Successfully wrote shipments data to db");
+        await fetchShipments();        
         await fetchOrders();
-        console.log("Successfully wrote orders data to db");*/
         await fetchEmployees();        
-        process.on("SIGINT", DBExit); // Ctrl + C handling
+        process.on("SIGINT", DB_WHExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
     }
 }
 
-export async function DBConnect() {
+export async function DB_WHConnect() {
     try {
         await client.connect();
         console.log("Successfully connected to the database");
-        process.on("SIGINT", DBExit); // Ctrl + C handling
+        process.on("SIGINT", DB_WHExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
     }
 }
 
-async function DBExit() {
+async function DB_WHExit() {
     try {
         await client.close();
         console.log("Disconnected from database");

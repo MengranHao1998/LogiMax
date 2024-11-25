@@ -1,9 +1,9 @@
 import { app } from "./app";
-import { DBConnect } from "./db-warehouse";
+import { DB_WHConnect } from "./db-warehouse";
 
 app.listen(app.get("port"), async () => {
     try {
-        await DBConnect();
+        await DB_WHConnect();
         console.log( "[server] http://localhost/:" + app.get("port"));
     } catch (e) {
         console.log(e);
