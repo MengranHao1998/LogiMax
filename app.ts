@@ -68,12 +68,13 @@ app.get('/home', secureMiddleware, async (req, res) => {
 
   const user = res.locals.user;
 
+  let chosenDate: string = "25-11-2024";
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
 
   const warehouses: Warehouse[] = await fetchWarehouses();
-  const orders: Order[] = await getOrders("24-11-2024");
-  const totalOrders = await countOrders("24-11-2024", warehouseId);
+  const orders: Order[] = await getOrders(chosenDate);
+  const totalOrders = await countOrders(chosenDate, warehouseId);
 
   //Totale waarde van alle items op voorraad
   const totalInventoryValue = (warehouseId: number) => {
@@ -109,7 +110,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
   const turnoverRate: number = Number((inventoryValue / ordersValue).toFixed(1));
 
 
-  const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
+  const delayedOrders = await countDelayedOrders(chosenDate, warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
