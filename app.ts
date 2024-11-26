@@ -1,7 +1,7 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, fetchWarehouses, countDelayedOrders } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -71,8 +71,43 @@ app.get('/home', secureMiddleware, async (req, res) => {
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
 
-  const warehouses = await fetchWarehouses();
+  const warehouses: Warehouse[] = await fetchWarehouses();
+  const orders: Order[] = await getOrders("24-11-2024");
   const totalOrders = await countOrders("24-11-2024", warehouseId);
+
+  //Totale waarde van alle items op voorraad
+  const totalInventoryValue = (warehouseId: number) => {
+    let totalValue: number = 0;
+    const chosenWarehouseProducts: Product[] = warehouses[warehouseId - 1].products;
+
+    for (let p of chosenWarehouseProducts) {
+      let price: number = p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice;
+      let subtotal: number = price * p.quantity;
+      totalValue += subtotal;
+    }
+    return totalValue;
+  }
+
+  //Totale waarde van alle items in orders
+  const totalOrdersValue = (warehouseId: number) => {
+    let totalValue: number = 0;
+    for (let o of orders) {      
+      const productsInOrders: Product[] = o.products;
+      for (let p of productsInOrders) {
+        if (o.warehouse_id === warehouseId) {
+          let price: number = p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice;
+          let subtotal: number = price * p.quantity;
+          totalValue += subtotal;
+        }        
+      }
+    }
+    return totalValue;
+  }
+  
+  const ordersValue: number = totalOrdersValue(warehouseId);
+  const inventoryValue: number = totalInventoryValue(warehouseId);
+  const turnoverRate: number = Number((inventoryValue / ordersValue).toFixed(1));
+
 
   const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
@@ -89,7 +124,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
       delayedOrders,
       onTimePercentage,
       spaceUtilization,
-      location
+      location,
+      turnoverRate     
     }
   }); // activePage => voor gebruik nav item
 });
@@ -104,10 +140,24 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   const warehouses = await fetchWarehouses();
   const totalOrders = await countOrders("24-11-2024", warehouseId);
 
+  // LOGIC STAT CARDS
   const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
+
+  //LOGIC TURNOVER RATE
+  const totalInventoryValue = (warehouseId: number) => {
+    let totalValue: number = 0;
+    const chosenWarehouseProducts: Product[] = warehouses[warehouseId].products;
+
+    for (let p of chosenWarehouseProducts) {
+      let price: number = p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice;
+      let subtotal: number = price * p.quantity;
+      totalValue += subtotal;
+    }
+    return totalValue;
+  }
 
   res.render('voorraad', {
     activePage: 'voorraad',
