@@ -79,10 +79,6 @@ async function fetchShipments() {
 
     await shipmentsCollection.insertMany(data);
     console.log("Successfully wrote shipments data to db");
-
-    const s = await shipmentsCollection.find<Order>({}).toArray();
-    const sl = await shipmentsCollection.countDocuments();
-    console.log(s[sl - 1]);
 }
 
 async function fetchOrders() {
@@ -97,10 +93,6 @@ async function fetchOrders() {
 
     await ordersCollection.insertMany(data);
     console.log("Successfully wrote orders data to db");
-
-    const o = await ordersCollection.find<Order>({}).toArray();
-    const ol = await ordersCollection.countDocuments();
-    console.log(o[ol - 1]);
 }
 
 async function fetchEmployees() {    
@@ -127,11 +119,20 @@ export async function PushToDatabase() {
         console.log("Successfully connected to the database");
         await fetchShipments();        
         await fetchOrders();
-        await fetchEmployees();        
+        await fetchEmployees();
+        await LastObjectInCollections();        
         process.on("SIGINT", DB_WHExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
     }
+}
+
+export async function LastObjectInCollections() {
+    const o = (await ordersCollection.find<Order>({}).toArray()).reverse();
+    console.log(`Date of last object in ORDERS collection: ${o[0].order_date}`);
+
+    const s = (await shipmentsCollection.find<Shipment>({}).toArray()).reverse();
+    console.log(`Date of last object in SHIPMENTS collection: ${s[0].shipment_date}`);
 }
 
 export async function DB_WHConnect() {
