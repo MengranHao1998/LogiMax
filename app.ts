@@ -66,15 +66,22 @@ app.post("/login", async (req, res) => {
 // renderen pagina INDEX
 app.get('/home', secureMiddleware, async (req, res) => {
 
-  const user = res.locals.user;
+ const user = res.locals.user;
 
-  let chosenDate: string = "25-11-2024";
+ const today = new Date();
+ let chosenDate: string = today.toLocaleDateString("nl-NL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+});
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
+  const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : chosenDate;
+  const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : chosenDate;
 
   const warehouses: Warehouse[] = await fetchWarehouses();
-  const orders: Order[] = await getOrders(chosenDate);
-  const totalOrders = await countOrders(chosenDate, warehouseId);
+  const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
+  const totalOrders = await countOrders(startDate, endDate, warehouseId);
 
   //Totale waarde van alle items op voorraad
   const totalInventoryValue = (warehouseId: number) => {
@@ -110,7 +117,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
   const turnoverRate: number = Number((inventoryValue / ordersValue).toFixed(1));
 
 
-  const delayedOrders = await countDelayedOrders(chosenDate, warehouseId);
+  const delayedOrders = await countDelayedOrders(startDate, endDate, warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
@@ -120,6 +127,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
     warehouses,
     user: user,
     warehouseId,
+    startDate,
+    endDate,
     stats: {
       totalOrders,
       delayedOrders,
@@ -135,14 +144,23 @@ app.get('/home', secureMiddleware, async (req, res) => {
 app.get('/voorraad', secureMiddleware, async(req, res) => {
   const user = res.locals.user;
 
+ const today = new Date();
+ let chosenDate: string = today.toLocaleDateString("nl-NL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+});
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
+  const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : chosenDate;
+  const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : chosenDate;
 
-  const warehouses = await fetchWarehouses();
-  const totalOrders = await countOrders("24-11-2024", warehouseId);
+  const warehouses: Warehouse[] = await fetchWarehouses();
+  const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
+  const totalOrders = await countOrders(startDate, endDate, warehouseId);
 
   // LOGIC STAT CARDS
-  const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
+  const delayedOrders = await countDelayedOrders(startDate, endDate ,warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
@@ -179,13 +197,22 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
 app.get('/processes',secureMiddleware, async (req, res) => {
   const user = res.locals.user;
 
+ const today = new Date();
+ let chosenDate: string = today.toLocaleDateString("nl-NL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+});
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
-  
-  const warehouses = await fetchWarehouses();
-  const totalOrders = await countOrders("24-11-2024", warehouseId);
+  const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : chosenDate;
+  const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : chosenDate;
 
-  const delayedOrders = await countDelayedOrders("24-11-2024", warehouseId);
+  const warehouses: Warehouse[] = await fetchWarehouses();
+  const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
+  const totalOrders = await countOrders(startDate, endDate, warehouseId);
+
+  const delayedOrders = await countDelayedOrders(startDate, endDate, warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;

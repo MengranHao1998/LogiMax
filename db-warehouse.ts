@@ -15,12 +15,19 @@ export const ordersCollection: Collection<Order> = client.db("db-warehouses").co
 export const employeesCollection: Collection<Employee> = client.db("db-warehouses").collection<Employee>("employees");
 
 // ORDERS
-export async function getOrders(date: string) {
-    return await ordersCollection.find<Order>({order_date: date}).toArray();
+export async function getOrders(startDate: string, endDate: string, warehouseId: number) {
+    console.log(`Fetching orders between: ${startDate} and ${endDate} for warehouse ${warehouseId}`);
+    return await ordersCollection.find<Order>({
+        warehouse_id: warehouseId,
+        order_date: {
+            $gte: startDate, // Greater than or equal to startDate
+            $lte: endDate  // Less than or equal to endDate
+        },
+    }).toArray();
 }
 
-export async function countOrders(date: string, warehouse_id: number) {
-    const allOrders: Order[] = await getOrders(date);
+export async function countOrders(startDate: string, endDate: string, warehouseId: number) {
+    const allOrders: Order[] = await getOrders(startDate, endDate, warehouseId);
     let sumOfOrders: number = 0;
 
     if (!allOrders) {
@@ -28,7 +35,7 @@ export async function countOrders(date: string, warehouse_id: number) {
     }
 
     for (let order of allOrders) {
-        if (order.warehouse_id === warehouse_id) {
+        if (order.warehouse_id === warehouseId) {
             sumOfOrders++;
         }
     }
@@ -36,8 +43,8 @@ export async function countOrders(date: string, warehouse_id: number) {
     return sumOfOrders;
 }
 
-export async function countDelayedOrders(date: string, warehouse_id: number) {
-    const allOrders: Order[] = await getOrders(date);
+export async function countDelayedOrders(startDate: string, endDate: string, warehouse_id: number) {
+    const allOrders: Order[] = await getOrders(startDate, endDate, warehouse_id);
     let sumOfDelayedOrders: number = 0;
 
     if (!allOrders) {

@@ -3,9 +3,8 @@
     console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
 </script>
 <!-- JS CALENDAR SCRIPT -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 <script>
     function changeWarehouse() {
       const selectedWarehouse = document.getElementById('location').value;
@@ -24,14 +23,31 @@
             <!--<option value="New York">New York</option>
             <option value="Los Angeles">Los Angeles</option>-->
         </select>
-        <input type="text" name="date" id="date" placeholder="Selecteer Datum" />
-            <script>
-                $(function() {
-                    $("#date").datepicker({
-                        dateFormat: "dd-mm-yy" // OMZETTEN DATA IN EU FORMAAT
-                    });
-                });
-            </script>
+        <input type="text" id="date_range" placeholder="Selecteer Datumbereik" />
+        <button onclick="filterData()">Filter</button>
+        <script>
+            flatpickr("#date_range", {
+                mode: "range",
+                dateFormat: "d-m-Y", // Set European date format
+                locale: {
+                    firstDayOfWeek: 1 // Start the week on Monday
+                }
+            });
+    // Filter data based on date range
+    function filterData() {
+        const selectedWarehouse = document.getElementById('location').value;
+        const dateRange = document.getElementById('date_range').value;
+
+        if (!dateRange) {
+            alert("Selecteer een datumbereik!");
+            return;
+        }
+
+        // Redirect with the selected warehouse and date range as query parameters
+        const dates = dateRange.split(" to ");
+        window.location.href = `/home?warehouseId=${selectedWarehouse}&startDate=${dates[0]}&endDate=${dates[1]}`;
+    }
+        </script>
     </section>
 </section>
 <article>
