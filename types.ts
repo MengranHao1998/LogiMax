@@ -39,6 +39,15 @@ export interface ProductPrice {
     currency: string;
 }
 
+export interface ProductTableInformation {
+    id: string;
+    title: string;
+    link: string;
+    image: string;
+    totalUnitsSold: number;
+    totalRevenue: number;
+  }
+
 // Interfaces /shipments
 export interface Shipment {
     shipment_id: string;
