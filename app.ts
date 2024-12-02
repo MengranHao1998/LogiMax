@@ -1,7 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Product } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -68,12 +68,10 @@ app.get('/home', secureMiddleware, async (req, res) => {
 
  const user = res.locals.user;
 
+ const chosenDate =  await LastObjectInCollections();
+
  const today = new Date();
- let chosenDate: string = today.toLocaleDateString("nl-NL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-});
+ 
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
   const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : chosenDate;

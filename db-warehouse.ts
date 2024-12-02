@@ -140,6 +140,8 @@ export async function LastObjectInCollections() {
 
     const s = (await shipmentsCollection.find<Shipment>({}).toArray()).reverse();
     console.log(`Date of last object in SHIPMENTS collection: ${s[0].shipment_date}`);
+
+    return o[0].order_date;
 }
 
 export async function DB_WHConnect() {

@@ -43,9 +43,11 @@
             return;
         }
 
-        // Redirect with the selected warehouse and date range as query parameters
-        const dates = dateRange.split(" to ");
-        window.location.href = `/home?warehouseId=${selectedWarehouse}&startDate=${dates[0]}&endDate=${dates[1]}`;
+         const dates = dateRange.split(" to ");
+         const startDate = dates[0];
+         const endDate = dates[1] || startDate;
+
+         window.location.href = `/home?warehouseId=${selectedWarehouse}&startDate=${startDate}&endDate=${endDate}`;
     }
         </script>
     </section>
