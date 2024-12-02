@@ -44,6 +44,7 @@ export interface ProductTableInformation {
     title: string;
     link: string;
     image: string;
+    price: number;
     totalUnitsSold: number;
     totalRevenue: number;
   }

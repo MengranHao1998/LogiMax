@@ -92,17 +92,27 @@
     <h2>Meest Verkocht</h2>
     <section class="thirdrow">
         <div class="placeholder">
-            <table id="productTable" border="1">
+            <table id="product-table" border="1">
                 <thead>
                     <tr>
+                        <th>Product Image</th>
                         <th>Product ID</th>
                         <th>Product Name</th>
-                        <th>Amount Sold</th>
-                        <th>Total Earnings</th>
+                        <th>Units Sold</th>
+                        <th>Total Revenue</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Rows will be dynamically added here -->
+                    <% for (let i = 0; i < 10; i++) { %>
+                        <tr>
+                            <td><img src="<%= productSalesData[i].image %>" alt="<%= productSalesData[i].title %>" width="100px"></td>
+                            <td><%= productSalesData[i].id %></td>
+                            <td><a href="<%= productSalesData[i].link %>"><%= productSalesData[i].title %></a></td>
+                            <td><%= productSalesData[i].totalUnitsSold %></td>
+                            <td><%= productSalesData[i].totalRevenue %></td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>

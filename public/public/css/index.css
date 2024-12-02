@@ -109,7 +109,6 @@
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1rem auto;
     text-align: center;
 }
 
@@ -121,8 +120,13 @@ thead th {
 
 tbody td {
     padding: 10px;
+    vertical-align: middle;
 }
 
 tbody tr:nth-child(even) {
     background-color: var(--background-almost-white);
+}
+
+tbody tr:hover {
+    background-color: #d9eafb;
 }

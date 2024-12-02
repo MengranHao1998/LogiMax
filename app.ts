@@ -1,5 +1,5 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse, Product } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation } from "./types";
 import { MongoClient, Collection } from "mongodb";
 import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections } from "./db-warehouse";
 import dotenv from "dotenv";
@@ -120,6 +120,52 @@ app.get('/home', secureMiddleware, async (req, res) => {
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
 
+  function getProductsFromSales(orders: Order[]): Product[] {
+    let salesProducts: Product[] = [];
+    let sales: Map<string, Product> = new Map(); // A map to store products by id
+  
+    // Collect all the products from all orders
+    for (let o of orders) {
+      for (let p of o.products) {
+        salesProducts.push(p);
+      }
+    }
+  
+    // Loop through all products in salesProducts and update the sales map
+    for (let sp of salesProducts) {
+      if (sales.has(sp.id)) {
+        // If the product is already in sales, update its quantity
+        let existingProduct = sales.get(sp.id)!; // We know the product exists, so we can safely use '!'
+        existingProduct.quantity += sp.quantity;
+      } else {
+        // If the product is not in sales, add it
+        sales.set(sp.id, { ...sp }); // Add a copy of the product to the map
+      }
+    }
+  
+    // Convert the Map to an array and return it
+    return Array.from(sales.values());
+  }
+  
+  const allSoldProducts = getProductsFromSales(orders);
+  let productSalesData: ProductTableInformation[] = [];
+  
+  for (let product of allSoldProducts) {
+    const productForTable: ProductTableInformation = {
+      id: product.id,
+      title: product.title,
+      link: product.link,
+      image: product.image,
+      price: product.price.actualPrice === null ? product.price.discountPrice : product.price.actualPrice,
+      totalUnitsSold: product.quantity,
+      totalRevenue: product.price.discountPrice * product.quantity
+    };
+  
+    productSalesData.push(productForTable);
+  }
+
+  productSalesData.sort((a, b) => b.totalRevenue - a.totalRevenue);
+
   res.render('index', {
     activePage: 'home',
     warehouses,
@@ -134,7 +180,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
       spaceUtilization,
       location,
       turnoverRate     
-    }
+    },
+    productSalesData
   }); // activePage => voor gebruik nav item
 });
 
