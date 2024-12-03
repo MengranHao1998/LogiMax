@@ -3,24 +3,25 @@ import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation 
 import { countOrders, fetchWarehouses, countDelayedOrders, getOrders } from "./db-warehouse";
 
 async function main() {
-  let startDate: string = "27-11-2024";
-  let endDate: string = "27-11-2024";
+  let startDate: string = "30-11-2024";
+  let endDate: string = "01-12-2024";
   let warehouseId = 2;
 
   const warehouses: Warehouse[] = await fetchWarehouses();
   const allOrders: Order[] = await getOrders(startDate, endDate, 2);
+  //console.log(allOrders[0]);
   const orders = getOrdersByWarehouse(allOrders, 2);
   const allProducts = getProductsInOrders(orders);
   //const productsTableData = calculateSalesPonci(allOrders);
   //productsTableData.sort((a, b) => b.totalRevenue - a.totalRevenue);
   //console.log(productsTableData);
 
-  function getOrdersByWarehouse(orders: Order[], warehouseId: number): Order[] {
-    return orders.filter(order => order.warehouse_id === warehouseId);
+function getOrdersByWarehouse(orders: Order[], warehouseId: number): Order[] {
+  return orders.filter(order => order.warehouse_id === warehouseId);
 }
 
-  function getProductsInOrders(orders: Order[]) {
-    return orders.flatMap(order => order.products);
+function getProductsInOrders(orders: Order[]) {
+  return orders.flatMap(order => order.products);
 }
 
 /*function calculateSalesPonci(allOrders: Order[]) {
@@ -96,17 +97,18 @@ for (let product of allSoldProducts) {
     image: product.image,
     price: product.price.actualPrice === null ? product.price.discountPrice : product.price.actualPrice,
     totalUnitsSold: product.quantity,
-    totalRevenue: product.price.discountPrice * product.quantity
+    totalRevenue: product.price.discountPrice * product.quantity,
+    currency: product.price.currency
   };
 
   productSalesData.push(productForTable);
 }
 
-console.log(allSoldProducts);
+//console.log(allSoldProducts);
 console.log("----------------------------------------------------------");
 console.log("----------------------------------------------------------");
 console.log("----------------------------------------------------------");
-console.log(productSalesData.sort((a, b) => b.totalRevenue - a.totalRevenue));
+//console.log(productSalesData.sort((a, b) => b.totalRevenue - a.totalRevenue));
 
 /*for (let i = 0; i < 10; i++) {
   console.log(test[i]);

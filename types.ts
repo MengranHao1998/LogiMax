@@ -47,6 +47,7 @@ export interface ProductTableInformation {
     price: number;
     totalUnitsSold: number;
     totalRevenue: number;
+    currency: string;
   }
 
 // Interfaces /shipments

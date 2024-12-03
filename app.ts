@@ -158,7 +158,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
       image: product.image,
       price: product.price.actualPrice === null ? product.price.discountPrice : product.price.actualPrice,
       totalUnitsSold: product.quantity,
-      totalRevenue: product.price.discountPrice * product.quantity
+      totalRevenue: Math.round(product.price.discountPrice * product.quantity),
+      currency: product.price.currency
     };
   
     productSalesData.push(productForTable);

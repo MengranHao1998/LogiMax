@@ -111,7 +111,7 @@
                             <td><%= productSalesData[i].id %></td>
                             <td><a href="<%= productSalesData[i].link %>"><%= productSalesData[i].title %></a></td>
                             <td><%= productSalesData[i].totalUnitsSold %></td>
-                            <td><%= productSalesData[i].totalRevenue %></td>
+                            <td><%= productSalesData[i].currency %> <%= productSalesData[i].totalRevenue %></td>
                         </tr>
                     <% } %>
                 </tbody>

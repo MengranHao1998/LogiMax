@@ -126,9 +126,26 @@ thead th {
     padding: 10px;
 }
 
+tbody tr {
+    height: 120px;
+}
+
+tbody img {
+    max-height: 100px;
+    width: 100px;
+}
+
 tbody td {
     padding: 10px;
     vertical-align: middle;
+}
+
+/*tbody tr td:nth-child(3) {
+    text-align: left;
+}*/
+
+tbody tr td:nth-child(4), tbody tr td:nth-child(5) {
+    font-weight: bold;
 }
 
 tbody tr:nth-child(even) {

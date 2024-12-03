@@ -111,6 +111,8 @@ nav {
     margin: 30px 10px;
     border-top: var(--border-grey) 2px solid;
     border-bottom: var(--border-grey) 2px solid;
+    position: fixed;
+    width: 280px;
 }
 
 nav a {
