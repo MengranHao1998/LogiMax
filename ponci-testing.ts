@@ -1,15 +1,51 @@
   
-import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation } from "./types";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders } from "./db-warehouse";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation, WarehouseProductStockValue } from "./types";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, getShipments, countIncomingShipments, countOutgoingShipments } from "./db-warehouse";
 
 async function main() {
-  let startDate: string = "30-11-2024";
-  let endDate: string = "01-12-2024";
+  let startDate: string = "03-12-2024";
+  let endDate: string = "03-12-2024";
   let warehouseId = 2;
 
   const warehouses: Warehouse[] = await fetchWarehouses();
   const allOrders: Order[] = await getOrders(startDate, endDate, 2);
-  //console.log(allOrders[0]);
+  const allShipments: Shipment[] = await getShipments(startDate, endDate, 6)
+  /*for (let i = 0; i < allShipments.length; i++) {
+    console.log(i+1 + " " + allShipments[i].shipment_id);
+  }*/
+
+  /*for (let i = 1; i <= 6; i++) {
+    const incomingShipments = await countIncomingShipments(startDate, endDate, i);
+    const outgoingShipments = await countOutgoingShipments(startDate, endDate, i);
+
+    console.log(i + " " + incomingShipments);
+    console.log(i + " " + outgoingShipments);
+  }*/
+
+  const productsStockValue = (warehouseData: Warehouse[], warehouseId: number) => {
+    let productsStockValue: WarehouseProductStockValue [] = [];
+  
+    for (let p of warehouseData[warehouseId].products) {
+      const object: WarehouseProductStockValue = {
+        warehouseId: warehouseId,
+        id: p.id,
+        title: p.title,
+        link: p.link,
+        image: p.image,
+        price: p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice,
+        quantity: p.quantity,
+        totalStockValue: Math.round(p.price.discountPrice * p.quantity),
+        currency: p.price.currency
+      };
+
+      productsStockValue.push(object);      
+    }
+    return productsStockValue;
+  };
+  
+  let test = productsStockValue(warehouses, warehouseId);
+  console.log(test);
+  
   const orders = getOrdersByWarehouse(allOrders, 2);
   const allProducts = getProductsInOrders(orders);
   //const productsTableData = calculateSalesPonci(allOrders);

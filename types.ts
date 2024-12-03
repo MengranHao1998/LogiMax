@@ -48,7 +48,7 @@ export interface ProductTableInformation {
     totalUnitsSold: number;
     totalRevenue: number;
     currency: string;
-  }
+}
 
 // Interfaces /shipments
 export interface Shipment {
@@ -68,6 +68,18 @@ export interface Warehouse {
     products: Product[];
     warehouse_capacity: number;
     space_utilization: number;
+}
+
+export interface WarehouseProductStockValue {
+    warehouseId: number;
+    id: string;
+    title: string;
+    link: string;
+    image: string;
+    price: number;
+    quantity: number;
+    totalStockValue: number;
+    currency: string;
 }
 
 // Interfaces /users
