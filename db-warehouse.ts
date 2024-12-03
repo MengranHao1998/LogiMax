@@ -62,6 +62,53 @@ export async function countDelayedOrders(startDate: string, endDate: string, war
     return sumOfDelayedOrders;
 }
 
+//SHIPMENTS
+export async function getShipments(startDate: string, endDate: string, warehouseId: number) {
+    console.log(`Fetching shipments between: ${startDate} and ${endDate} for warehouse ${warehouseId}`);
+    return await shipmentsCollection.find<Shipment>({
+        warehouse_id: warehouseId,
+        shipment_date: {
+            $gte: startDate, // Greater than or equal to startDate
+            $lte: endDate  // Less than or equal to endDate
+        },
+    }).toArray();
+}
+
+export async function countIncomingShipments(startDate: string, endDate: string, warehouseId: number) {
+    const allShipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
+    let sumOfShipments: number = 0;
+
+    if (!allShipments) {
+        return sumOfShipments; // Return 0 if there are no orders
+    }
+
+    for (let shipment of allShipments) {
+        if (shipment.warehouse_id === warehouseId && shipment.type === "incoming") {
+            sumOfShipments++;
+        }
+    }
+    
+    return sumOfShipments;
+}
+
+export async function countOutgoingShipments(startDate: string, endDate: string, warehouseId: number) {
+    const allShipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
+    let sumOfShipments: number = 0;
+
+    if (!allShipments) {
+        return sumOfShipments; // Return 0 if there are no shipments
+    }
+
+    // Loop through all shipments and count only outgoing ones for the specified warehouse
+    for (let shipment of allShipments) {
+        if (shipment.warehouse_id === warehouseId && shipment.type === "outgoing") {
+            sumOfShipments++;
+        }
+    }
+
+    return sumOfShipments;
+}
+
 export async function fetchWarehouses() {
     const response = await fetch("https://logimax-api.onrender.com/warehouses/", {
         method: "GET",

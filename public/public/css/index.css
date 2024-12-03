@@ -90,7 +90,15 @@
     background-position: center;
 }
 
-.thirdrow H2{
+.high {
+    color: green;
+}
+
+.medium {
+    color: orange;
+}
+
+.low {
     color: red;
 }
 /* VOORRAAD OMZET PLACEHOLDER */

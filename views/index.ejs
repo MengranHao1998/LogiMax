@@ -52,6 +52,7 @@
         </script>
     </section>
 </section>
+<h1><%= startDate %> tot en met <%= endDate %></h1>
 <article>
     <h2>Overview</h2>
 <section class="firstrow">
@@ -118,9 +119,12 @@
         </div>
         </div>
         <div class="statcard">
+            <p>Stock Level</p>
             <i></i>
-            <h2>LOW</h2>
-            <p>Product 1 Stock</p>
+            <h2 class="<%= productSalesData[0].totalUnitsSold > 30 ? 'low' : (productSalesData[0].totalUnitsSold >= 15 && productSalesData[0].totalUnitsSold <= 30 ? 'medium' : 'high') %>">
+                <%= productSalesData[0].totalUnitsSold > 30 ? 'LOW' : (productSalesData[0].totalUnitsSold >= 15 && productSalesData[0].totalUnitsSold <= 30 ? 'MEDIUM' : 'HIGH') %>
+            </h2>
+            <p><%= productSalesData[0].title %></p>
         </div>
     </section>
 </article>

@@ -1,7 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections, getShipments, countIncomingShipments, countOutgoingShipments } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -190,11 +190,9 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   const user = res.locals.user;
 
  const today = new Date();
- let chosenDate: string = today.toLocaleDateString("nl-NL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-});
+
+ const chosenDate =  await LastObjectInCollections();
+
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
   const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : chosenDate;
@@ -228,6 +226,8 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
     warehouses,
     user: user,
     warehouseId,
+    startDate,
+    endDate,
     stats: {
       totalOrders,
       delayedOrders,
@@ -242,36 +242,32 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
 app.get('/processes',secureMiddleware, async (req, res) => {
   const user = res.locals.user;
 
- const today = new Date();
- let chosenDate: string = today.toLocaleDateString("nl-NL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-});
+ const chosenDate =  await LastObjectInCollections();
+
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
   const startDate = typeof req.query.startDate === 'string' ? req.query.startDate : chosenDate;
   const endDate = typeof req.query.endDate === 'string' ? req.query.endDate : chosenDate;
 
   const warehouses: Warehouse[] = await fetchWarehouses();
-  const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
-  const totalOrders = await countOrders(startDate, endDate, warehouseId);
 
-  const delayedOrders = await countDelayedOrders(startDate, endDate, warehouseId);
-  const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
-  const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
+
+  const shipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
+  const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
+  const outgoingShipments = await countOutgoingShipments(startDate, endDate, warehouseId);
 
   res.render('processes', {
     activePage: 'processes',
     warehouses,
     user: user,
     warehouseId,
+    startDate,
+    endDate,
     stats: {
-      totalOrders,
-      delayedOrders,
-      onTimePercentage,
-      spaceUtilization,
+      shipments,
+      incomingShipments,
+      outgoingShipments,
       location
     }
   }); 
