@@ -109,10 +109,6 @@
     box-shadow: 1px 3px #acb1b6;
     background-color: #fff;
 }
-.placeholder canvas {
-    width: 100%;  /* Maakt de chart responsief */
-    height: auto;
-}
 /* MEEST VERKOCHT PLACEHOLDER */
 table {
     width: 100%;
