@@ -76,16 +76,22 @@
 <article>
     <h2>Verzending en Ontvangst</h2>
     <section class="secondrow">
-        <img src="/images/verzendingenOntvangst.png" class="placeholder" style="height: 300px; width: 1000px;">
+        <canvas id="verzendingOntvangstChart" width="400px" height="400px"></canvas>
     </section>
 </article>
 <article>
     <h2>Werknemersprestaties</h2>
-    <section class="thirdrow">
-        <img src="/images/werknemersprestaties.png" class="placeholder" style="height: 300px; width: 1000px;">
+    <section class="secondrow">
+        <canvas id="werknemerPrestaties" width="400px" height="400px"></canvas>
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="sortById">Sorteer op ID</button>
+            <button id="sortByOrders">Sorteer op Orders (Hoog naar laag)</button>
+        </div>
     </section>
 </article>
 <%- include("partials/doc-end")%>
 <!-- CHART SCRIPTS  -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/dashboard-charts.js"></script>
+<script src="/js/verzendingOntvangstChart.js"></script>
+<script src="/js/werknemerPrestatieChart.js"></script>
