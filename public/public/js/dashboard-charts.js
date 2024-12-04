@@ -82,6 +82,7 @@ const Ruimtegebruik = new Chart(doughnutCtx, {
     }
 });
 
+/*
 // WERKNEMER PRESTATIES CHART
 const werknemerCtx = document.getElementById('werknemerPrestaties').getContext('2d');
 const werknemerChart = new Chart(werknemerCtx,{
@@ -148,3 +149,4 @@ const verzendingOntvangstChart = new Chart(verzendingOntvangstCtx, {
         }
     }
 });
+*/
