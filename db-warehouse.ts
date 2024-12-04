@@ -121,6 +121,29 @@ export async function fetchWarehouses() {
     return data;
 }
 
+export async function fetchWarehousesProducts(warehouseId: number) {
+    try {
+      const response = await fetch(`https://logimax-api.onrender.com/warehouses/${warehouseId}/products`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": "logimax-admin"
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch warehouse products: ${response.status}`);
+      }
+  
+      const data = await response.json();
+  
+      return data.products.slice(0, 10);
+    } catch (error) {
+      console.error("Error in fetchWarehousesProducts:", error);
+      throw error;
+    }
+  }
+
 async function fetchShipments() {
     const response = await fetch("https://logimax-api.onrender.com/shipments/", {
         method: "GET",

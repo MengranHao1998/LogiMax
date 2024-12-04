@@ -1,7 +1,7 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections, getShipments, countIncomingShipments, countOutgoingShipments } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections, getShipments, countIncomingShipments, countOutgoingShipments, } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -274,10 +274,48 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   }); 
 });
 
-// renderen chart INDEX
-app.get('/home',secureMiddleware, async (req, res) => {
-  const chartData = [0]; // Example data
-  res.render('index', { chartData });
+app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
+  try {
+    const user = res.locals.user;
+
+    console.log("Fetching warehouse data...");
+    const warehouses: Warehouse[] = await fetchWarehouses();
+    const warehouseId = req.query.warehouseId ? parseInt(req.query.warehouseId as string, 10) : null;
+
+    if (warehouseId === null || isNaN(warehouseId) || warehouseId < 0 || warehouseId >= warehouses.length) {
+      return res.status(400).json({ error: "Invalid warehouseId" });
+    }
+
+    const productsStockValue = (warehouseData: Warehouse[], warehouseId: number) => {
+      let productsStockValue: WarehouseProductStockValue[] = [];
+
+      for (let p of warehouseData[warehouseId].products) {
+        const object: WarehouseProductStockValue = {
+          warehouseId: warehouseId,
+          id: p.id,
+          title: p.title,
+          link: p.link,
+          image: p.image,
+          price: p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice,
+          quantity: p.quantity,
+          totalStockValue: Math.round(p.price.discountPrice * p.quantity),
+          currency: p.price.currency,
+        };
+
+        productsStockValue.push(object);
+      }
+
+      return productsStockValue.slice(0, 10);
+    };
+
+    const result = productsStockValue(warehouses, warehouseId);
+    console.log(`Generated Products Stock Value for Warehouse ${warehouseId}:`, result);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error generating products stock value:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 

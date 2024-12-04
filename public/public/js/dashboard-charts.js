@@ -1,34 +1,4 @@
 // VOORAAD OMZET CHART
-const ctx = document.getElementById('voorraadOmzet').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli'],
-        datasets: [
-            {
-                label: 'IN',
-                data: [120, 190, 30, 50, 20, 30, 90],
-                backgroundColor: '#3E3DE0',
-                borderColor: '#1E1E1E',
-                borderWidth: 1
-            },
-            {
-                label: 'OUT',
-                data: [80, 140, 60, 90, 40, 50, 110],
-                backgroundColor: '#3de0c6',
-                borderColor: '#1E1E1E',
-                borderWidth: 1
-            }
-        ]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
 
 // MEEST VERKOCHT CHART/TABLE
 const products = [
