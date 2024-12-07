@@ -3,6 +3,7 @@ import { MongoClient, Collection } from "mongodb";
 import dotenv from "dotenv";
 
 dotenv.config();
+const fs = require('fs');
 
 const MONGODB_URI = process.env.MONGO_URI;
 if (!MONGODB_URI) {
@@ -196,22 +197,50 @@ export async function PushToDatabase() {
         console.log("Successfully connected to the database");
         await fetchShipments();        
         await fetchOrders();
-        await fetchEmployees();
-        await LastObjectInCollections();        
+        await fetchEmployees();       
         process.on("SIGINT", DB_WHExit); // Ctrl + C handling
     } catch (e) {
         console.error("Error connecting to the database:", e);
     }
 }
 
-export async function LastObjectInCollections() {
+/*export async function LastObjectInCollections() {
     const o = (await ordersCollection.find<Order>({}).toArray()).reverse();
     console.log(`Date of last object in ORDERS collection: ${o[0].order_date}`);
 
     const s = (await shipmentsCollection.find<Shipment>({}).toArray()).reverse();
     console.log(`Date of last object in SHIPMENTS collection: ${s[0].shipment_date}`);
+}*/
+    
 
-    return o[0].order_date;
+export async function dbRedeployEmployees() {
+    // Read the JSON file asynchronously
+    const data = fs.readFileSync('./db-data/employees-collection-array.json', 'utf8');
+    
+    // Parse the JSON data into an array of objects
+    const parsedData = JSON.parse(data);
+    await employeesCollection.insertMany(parsedData);
+    console.log("DONE");
+}
+
+export async function dbRedeployShipments() {
+    // Read the JSON file asynchronously
+    const data = fs.readFileSync('./db-data/shipments-collection-array.json', 'utf8');
+    
+    // Parse the JSON data into an array of objects
+    const parsedData = JSON.parse(data);
+    await shipmentsCollection.insertMany(parsedData);
+    console.log("DONE");
+}
+
+export async function dbRedeployOrders() {
+    // Read the JSON file asynchronously
+    const data = fs.readFileSync('./db-data/orders-collection-array.json', 'utf8');
+    
+    // Parse the JSON data into an array of objects
+    const parsedData = JSON.parse(data);
+    await ordersCollection.insertMany(parsedData);
+    console.log("DONE");
 }
 
 export async function DB_WHConnect() {
@@ -224,7 +253,7 @@ export async function DB_WHConnect() {
     }
 }
 
-async function DB_WHExit() {
+export async function DB_WHExit() {
     try {
         await client.close();
         console.log("Disconnected from database");

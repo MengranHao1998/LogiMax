@@ -1,7 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, LastObjectInCollections, getShipments, countIncomingShipments, countOutgoingShipments, } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, getShipments, countIncomingShipments, countOutgoingShipments, } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -68,7 +68,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
 
  const user = res.locals.user;
 
- const chosenDate =  await LastObjectInCollections();
+ const chosenDate =  "03-12-2024";
 
  const today = new Date();
  
@@ -192,7 +192,7 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
 
  const today = new Date();
 
- const chosenDate =  await LastObjectInCollections();
+ const chosenDate =  "03-12-2024";
 
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
@@ -243,7 +243,7 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
 app.get('/processes',secureMiddleware, async (req, res) => {
   const user = res.locals.user;
 
- const chosenDate =  await LastObjectInCollections();
+ const chosenDate =  "03-12-2024";
 
   let warehouseId = req.query.warehouseId || user.accessibleWarehouses[0];
   warehouseId = parseInt(warehouseId as string, 10);
