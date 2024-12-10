@@ -44,6 +44,13 @@ export async function countOrders(startDate: string, endDate: string, warehouseI
     return sumOfOrders;
 }
 
+export async function countOrders_Optimized(startDate: string, endDate: string, warehouseId: number) {
+    return ordersCollection.countDocuments({
+        warehouse_id: warehouseId,
+        order_date: { $gte: startDate, $lte: endDate }
+    });
+}
+
 export async function countDelayedOrders(startDate: string, endDate: string, warehouse_id: number) {
     const allOrders: Order[] = await getOrders(startDate, endDate, warehouse_id);
     let sumOfDelayedOrders: number = 0;
@@ -61,6 +68,14 @@ export async function countDelayedOrders(startDate: string, endDate: string, war
     }
     
     return sumOfDelayedOrders;
+}
+
+export async function countDelayedOrders_Optimized(startDate: string, endDate: string, warehouseId: number) {
+    return ordersCollection.countDocuments({
+        warehouse_id: warehouseId,
+        order_date: { $gte: startDate, $lte: endDate },
+        $expr: { $eq: ["$order_date", "$delivery_deadline"] } //expression: {als volgende argumenten elkaar zijn aan elkaar [arg1, arg2]}
+    });
 }
 
 //SHIPMENTS
@@ -108,6 +123,17 @@ export async function countOutgoingShipments(startDate: string, endDate: string,
     }
 
     return sumOfShipments;
+}
+
+export async function countOutgoingShipments_Optimized(startDate: string, endDate: string, warehouseId: number) {
+    return shipmentsCollection.countDocuments({
+        warehouse_id: warehouseId,
+        type: "outgoing",
+        shipment_date: {
+            $gte: startDate, // Greater than or equal to startDate
+            $lte: endDate  // Less than or equal to endDate
+        }
+    });
 }
 
 export async function fetchWarehouses() {
@@ -212,7 +238,7 @@ export async function PushToDatabase() {
     console.log(`Date of last object in SHIPMENTS collection: ${s[0].shipment_date}`);
 }*/
     
-
+// Deze functie diende ENKEL om een nieuwe DB op te zetten!
 export async function dbRedeployEmployees() {
     // Read the JSON file asynchronously
     const data = fs.readFileSync('./db-data/employees-collection-array.json', 'utf8');
@@ -223,6 +249,7 @@ export async function dbRedeployEmployees() {
     console.log("DONE");
 }
 
+// Deze functie diende ENKEL om een nieuwe DB op te zetten!
 export async function dbRedeployShipments() {
     // Read the JSON file asynchronously
     const data = fs.readFileSync('./db-data/shipments-collection-array.json', 'utf8');
@@ -233,6 +260,8 @@ export async function dbRedeployShipments() {
     console.log("DONE");
 }
 
+
+// Deze functie diende ENKEL om een nieuwe DB op te zetten!
 export async function dbRedeployOrders() {
     // Read the JSON file asynchronously
     const data = fs.readFileSync('./db-data/orders-collection-array.json', 'utf8');

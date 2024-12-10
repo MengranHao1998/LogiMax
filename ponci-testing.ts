@@ -1,9 +1,10 @@
   
 import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation, WarehouseProductStockValue } from "./types";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, getShipments, countIncomingShipments, countOutgoingShipments } from "./db-warehouse";
+import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, getShipments, countIncomingShipments, countOutgoingShipments,
+  countOutgoingShipments_Optimized, countDelayedOrders_Optimized, countOrders_Optimized } from "./db-warehouse";
 
 async function main() {
-  let startDate: string = "03-12-2024";
+  let startDate: string = "01-12-2024";
   let endDate: string = "03-12-2024";
   let warehouseId = 2;
 
@@ -44,7 +45,7 @@ async function main() {
   };
   
   let test = productsStockValue(warehouses, warehouseId);
-  console.log(test);
+  //console.log(test);
   
   const orders = getOrdersByWarehouse(allOrders, 2);
   const allProducts = getProductsInOrders(orders);
@@ -209,6 +210,15 @@ console.log("----------------------------------------------------------");
   const ordersValue: number = totalOrdersValue(warehouseId);
   const inventoryValue: number = totalInventoryValue(warehouseId);
   const turnoverRate: number = Number((inventoryValue / ordersValue).toFixed(1));*/
+
+  // Tests OPTIMIZING
+
+  console.log(await countOutgoingShipments_Optimized(startDate, endDate, 4));
+  console.log(await countDelayedOrders_Optimized(startDate, endDate, 4));
+  console.log(await countOrders_Optimized(startDate, endDate, 4));
 }
+
+
+
 
 main();
