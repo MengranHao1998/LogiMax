@@ -260,7 +260,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
   const outgoingShipments = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
 
-  const shipmentData = [
+  const chartData = [
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
     {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-01"},
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-02"},
@@ -275,7 +275,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
     {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-06"},
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-07"},
     {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-07"}
-] // Correct data injection
+] 
 
   res.render('processes', {
     activePage: 'processes',
@@ -284,7 +284,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
     warehouseId,
     startDate,
     endDate,
-    shipmentData,
+    chartData,
       stats: {
       shipments,
       incomingShipments,
@@ -294,6 +294,47 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   }); 
 });
 
+app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
+  try {
+    const user = res.locals.user;
+
+    console.log("Fetching warehouse data...");
+    const warehouses: Warehouse[] = await fetchWarehouses();
+    const warehouseId = req.query.warehouseId ? parseInt(req.query.warehouseId as string, 10) : null;
+
+    if (warehouseId === null || isNaN(warehouseId) || warehouseId < 0 || warehouseId >= warehouses.length) {
+      return res.status(400).json({ error: "Invalid warehouseId" });
+    }
+
+    const productsStockValue = (warehouseData: Warehouse[], warehouseId: number) => {
+      if (!warehouseData[warehouseId] || !warehouseData[warehouseId].products.length) {
+        console.log("No products found, returning default data.");
+        return [
+          { title: "Product A", quantity: 100, price: 10 },
+          { title: "Product B", quantity: 200, price: 15 },
+          { title: "Product C", quantity: 300, price: 20 },
+          { title: "Product D", quantity: 400, price: 25 },
+          { title: "Product E", quantity: 500, price: 30 }
+        ]; // 默认数据
+      }
+
+      return warehouseData[warehouseId].products.map(product => ({
+        title: product.title,
+        quantity: product.quantity,
+      })).slice(0, 10);
+    };
+
+    const result = productsStockValue(warehouses, warehouseId);
+    console.log(`Generated Products Stock Value for Warehouse ${warehouseId}:`, result);
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error generating products stock value:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+/* 等api重新恢复 然后删除注释。。。。。。。。。。。。。。。。。。。。。。。。。。。。
 app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
   try {
     const user = res.locals.user;
@@ -336,7 +377,8 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
     console.error("Error generating products stock value:", error);
     res.status(500).send("Internal Server Error");
   }
-});
+});*/
+
 
 
 export {app};
