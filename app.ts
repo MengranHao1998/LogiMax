@@ -258,6 +258,23 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
   const outgoingShipments = await countOutgoingShipments(startDate, endDate, warehouseId);
 
+  const chartData = [
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-01"},
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-02"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-02"},
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-03"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-03"},
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-04"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-04"},
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-05"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-05"},
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-06"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-06"},
+    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-07"},
+    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-07"}
+] 
+
   res.render('processes', {
     activePage: 'processes',
     warehouses,
@@ -265,6 +282,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
     warehouseId,
     startDate,
     endDate,
+    chartData,
     stats: {
       shipments,
       incomingShipments,

@@ -80,29 +80,14 @@
     <h2>Verzending en Ontvangst</h2>
     <section class="secondrow">
         <div id="chart"></div>
-        <script>
-
+     <script>
+        
     // Vega-Lite Specification
     const chartSpec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
         "data": {
-            "values": [
-            {"Type": "Aangekomen", "Shipments": 90, "Date": "2023-12-01"},
-            {"Type": "Verzendingen", "Shipments": 35, "Date": "2023-12-01"},
-            {"Type": "Aangekomen", "Shipments": 60, "Date": "2023-12-02"},
-            {"Type": "Verzendingen", "Shipments": 40, "Date": "2023-12-02"},
-            {"Type": "Aangekomen", "Shipments": 70, "Date": "2023-12-03"},
-            {"Type": "Verzendingen", "Shipments": 50, "Date": "2023-12-03"},
-            {"Type": "Aangekomen", "Shipments": 80, "Date": "2023-12-04"},
-            {"Type": "Verzendingen", "Shipments": 60, "Date": "2023-12-04"},
-            {"Type": "Aangekomen", "Shipments": 90, "Date": "2023-12-05"},
-            {"Type": "Verzendingen", "Shipments": 70, "Date": "2023-12-05"},
-            {"Type": "Aangekomen", "Shipments": 100, "Date": "2023-12-06"},
-            {"Type": "Verzendingen", "Shipments": 80, "Date": "2023-12-06"},
-            {"Type": "Aangekomen", "Shipments": 110, "Date": "2023-12-07"},
-            {"Type": "Verzendingen", "Shipments": 90, "Date": "2023-12-07"}
-        ] // Correct data injection
+            "values": chartData
         },
         "mark": "bar",
         "encoding": {
