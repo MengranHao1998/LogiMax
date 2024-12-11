@@ -283,7 +283,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
     startDate,
     endDate,
     chartData,
-    stats: {
+      stats: {
       shipments,
       incomingShipments,
       outgoingShipments,
