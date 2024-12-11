@@ -204,13 +204,6 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   const warehouses: Warehouse[] = await fetchWarehouses();
   const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
   const totalOrders = await countOrders_Optimized(startDate, endDate, warehouseId);
-
-  // LOGIC STAT CARDS
-  const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate ,warehouseId);
-  const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
-  const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
-  const location = warehouses[warehouseId - 1].location;
-
   //LOGIC TURNOVER RATE
   const totalInventoryValue = (warehouseId: number) => {
     let totalValue: number = 0;
@@ -223,6 +216,12 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
     }
     return totalValue;
   }
+  // LOGIC STAT CARDS
+  const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate ,warehouseId);
+  const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
+  const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
+  const location = warehouses[warehouseId - 1].location;
+  const inventoryValue = totalInventoryValue(warehouseId);
 
   res.render('voorraad', {
     activePage: 'voorraad',
@@ -236,7 +235,8 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
       delayedOrders,
       onTimePercentage,
       spaceUtilization,
-      location
+      location,
+      inventoryValue
     }
   }); // activePage => voor gebruik nav item
 });
