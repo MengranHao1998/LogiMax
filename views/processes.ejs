@@ -61,12 +61,12 @@
     <section class="firstrow">
         <div class="statcard">
             <i></i>
-            <h2><%= stats.outgoingShipments %></h2>
+            <h2><%= stats.incomingShipments %></h2>
             <p>Aangekomen</p>
         </div>
         <div class="statcard">
             <i></i>
-            <h2><%= stats.incomingShipments %></h2>
+            <h2><%= stats.outgoingShipments %></h2>
             <p>Verzendingen</p>
         </div>
         <div class="statcard">
@@ -80,14 +80,18 @@
     <h2>Verzending en Ontvangst</h2>
     <section class="secondrow">
         <div id="chart"></div>
-     <script>
-        
+        <script>
+
     // Vega-Lite Specification
     const chartSpec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
         "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
         "data": {
-            "values": chartData
+            "values": [
+      <% shipmentData.forEach((item, index) => { %>
+        { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < shipmentData.length - 1 ? ',' : '' %>
+      <% }); %>
+    ]
         },
         "mark": "bar",
         "encoding": {

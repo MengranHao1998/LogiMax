@@ -260,7 +260,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
   const outgoingShipments = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
 
-  const chartData = [
+  const shipmentData = [
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
     {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-01"},
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-02"},
@@ -275,7 +275,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
     {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-06"},
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-07"},
     {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-07"}
-] 
+] // Correct data injection
 
   res.render('processes', {
     activePage: 'processes',
@@ -284,7 +284,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
     warehouseId,
     startDate,
     endDate,
-    chartData,
+    shipmentData,
       stats: {
       shipments,
       incomingShipments,
