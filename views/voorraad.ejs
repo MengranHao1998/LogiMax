@@ -11,6 +11,67 @@
       window.location.href = `/voorraad?warehouseId=${selectedWarehouse}`;
     }
   </script>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <script>
+      async function fetchAndRenderVoorraadOmzetChart(warehouseId) {
+        try {
+          const response = await fetch(`/api/products-stock-value?warehouseId=${warehouseId}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+      
+          const data = await response.json();
+          console.log(`Fetched data for warehouse ${warehouseId}:`, data);
+      
+          if (!data.length) {
+            console.error("No data available for chart.");
+            return;
+          }
+      
+          vegaEmbed("#voorraadOmzet", {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": "container",
+            "description": `Voorraad Omzet Chart for Warehouse ${warehouseId}`,
+            "data": { "values": data },
+            "transform": [
+              {
+                "calculate": "datum.quantity < 200 ? 'Low Stock' : 'Normal Stock'",
+                "as": "StockLevel"
+              }
+            ],
+            "mark": "bar",
+            "encoding": {
+              "x": { "field": "title", "type": "ordinal", "axis": null },
+              "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "totalStockValue" } },
+              "color": {
+                "field": "StockLevel",
+                "type": "nominal",
+                "scale": {
+                  "domain": ["Low Stock", "Normal Stock"],
+                  "range": ["red", "blue"]
+                },
+                "legend": {
+                  "title": "Stock Level",
+                  "orient": "right"
+                }
+              }
+            }
+          });
+        } catch (error) {
+          console.error("Error fetching voorraad omzet data:", error);
+        }
+      }
+      
+      function changeWarehouse() {
+        const warehouseId = document.getElementById('location').value;
+        fetchAndRenderVoorraadOmzetChart(warehouseId);
+      }
+      
+      fetchAndRenderVoorraadOmzetChart(0);
+    </script>
+    
 <section class="menu">
     <h1><%= stats.location %></h1>
     <section class="dropdowns">
@@ -75,7 +136,7 @@
 <article>
     <h2>Voorraad Omzet</h2>
     <section class="secondrow">
-        <canvas id="voorraadOmzetChart" width="200px" height="200px"></canvas>
+        <div class="placeholder" id="voorraadOmzet"></div>
     </section>
 </article>
 <article>

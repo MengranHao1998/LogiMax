@@ -9,6 +9,8 @@ import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser";
 import { loginUser, getUserByUsername } from "./db-users";
 import { User } from "./types";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 
