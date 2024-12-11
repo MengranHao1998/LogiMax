@@ -5,6 +5,9 @@
 <!-- JS CALENDAR SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 <script>
     function changeWarehouse() {
       const selectedWarehouse = document.getElementById('location').value;
@@ -59,12 +62,12 @@
         <div class="statcard">
             <i></i>
             <h2><%= stats.outgoingShipments %></h2>
-            <p>Verzendingen</p>
+            <p>Aangekomen</p>
         </div>
         <div class="statcard">
             <i></i>
             <h2><%= stats.incomingShipments %></h2>
-            <p>Aangekomen</p>
+            <p>Verzendingen</p>
         </div>
         <div class="statcard">
             <i></i>
@@ -76,7 +79,63 @@
 <article>
     <h2>Verzending en Ontvangst</h2>
     <section class="secondrow">
-        <canvas id="verzendingOntvangstChart" width="200px" height="200px"></canvas>
+        <div id="chart"></div>
+        <script>
+
+    // Vega-Lite Specification
+    const chartSpec = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+        "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
+        "data": {
+            "values": [
+            {"Type": "Aangekomen", "Shipments": 90, "Date": "2023-12-01"},
+            {"Type": "Verzendingen", "Shipments": 35, "Date": "2023-12-01"},
+            {"Type": "Aangekomen", "Shipments": 60, "Date": "2023-12-02"},
+            {"Type": "Verzendingen", "Shipments": 40, "Date": "2023-12-02"},
+            {"Type": "Aangekomen", "Shipments": 70, "Date": "2023-12-03"},
+            {"Type": "Verzendingen", "Shipments": 50, "Date": "2023-12-03"},
+            {"Type": "Aangekomen", "Shipments": 80, "Date": "2023-12-04"},
+            {"Type": "Verzendingen", "Shipments": 60, "Date": "2023-12-04"},
+            {"Type": "Aangekomen", "Shipments": 90, "Date": "2023-12-05"},
+            {"Type": "Verzendingen", "Shipments": 70, "Date": "2023-12-05"},
+            {"Type": "Aangekomen", "Shipments": 100, "Date": "2023-12-06"},
+            {"Type": "Verzendingen", "Shipments": 80, "Date": "2023-12-06"},
+            {"Type": "Aangekomen", "Shipments": 110, "Date": "2023-12-07"},
+            {"Type": "Verzendingen", "Shipments": 90, "Date": "2023-12-07"}
+        ] // Correct data injection
+        },
+        "mark": "bar",
+        "encoding": {
+            "x": {
+                "field": "Date",
+                "type": "ordinal",
+                "axis": {"title": "Date"}
+            },
+            "xOffset": {
+                "field": "Type" // Offsets bars within each date group based on Type
+            },
+            "y": {
+                "field": "Shipments",
+                "type": "quantitative",
+                "axis": {"title": "Aantal"}
+            },
+            "color": {
+                "field": "Type",
+                "type": "nominal",
+                "scale": {"scheme": "category10"},
+                "legend": {"title": "Shipment Type"}
+            }
+        },
+        "config": {
+            "bar": {
+                "width": 20 // Adjust the width of each bar for better spacing
+            }
+        }
+    };
+
+    // Embed the chart
+    vegaEmbed('#chart', chartSpec).catch(console.error);
+          </script>
     </section>
 </article>
 <article>
