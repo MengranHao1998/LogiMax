@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script>
-async function fetchAndRenderVoorraadOmzetChart(warehouseId) {
+async function fetchProductsStockValue(warehouseId) {
   try {
     const response = await fetch(`/api/products-stock-value?warehouseId=${warehouseId}`);
     if (!response.ok) {
@@ -24,35 +24,71 @@ async function fetchAndRenderVoorraadOmzetChart(warehouseId) {
 
     const data = await response.json();
     console.log(`Fetched data for warehouse ${warehouseId}:`, data);
+    return data;
 
     if (!data.length) {
       console.error("No data available for chart.");
       return;
     }
+    return data;
 
     vegaEmbed("#voorraadOmzet", {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "description": `Voorraad Omzet Chart for Warehouse ${warehouseId}`,
-      "data": { "values": data },
-      "mark": "bar",
-      "encoding": {
-        "x": { "field": "title", "type": "ordinal", "axis": { "title": "Product Name", "labelAngle": -45 } },
-        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Quantity" } },
-        "color": { "field": "title", "type": "nominal", "legend": { "title": "Product" } }
-      }
-    });
+    "description": "Line chart showing incoming and outgoing shipments for different warehouses with interactive selection.",
+    "width": "container",
+    "data": {
+        "values": data
+    },
+    "selection": {
+        "warehouseSelection": {
+            "type": "multi",
+            "fields": ["title"],
+            "bind": "legend"
+        }
+    },
+    "mark": {
+        "type": "bar",
+    },
+    "encoding": {
+        "x": {
+          "field": "title",
+            "type": "ordinal",
+            "axis": null 
+        },
+        "y": {
+          "field": "quantity",
+            "type": "quantitative",
+            "axis": { "title": "Quantity" }
+        },
+        "color": {
+          "field": "title",
+            "type": "nominal",
+            "legend": { "title": "Product" }
+        },
+        "opacity": {
+            "condition": { "selection": "warehouseSelection", "value": 1 },
+            "value": 0.2
+        },
+        "detail": {
+            "field": "type",
+            "type": "nominal"
+        }
+    }
+    
+});
   } catch (error) {
     console.error("Error fetching voorraad omzet data:", error);
   }
 }
-
-function changeWarehouse() {
-  const warehouseId = document.getElementById('location').value;
-  fetchAndRenderVoorraadOmzetChart(warehouseId);
-}
-
-fetchAndRenderVoorraadOmzetChart(0);
-  </script>
+    
+    function changeWarehouse() {
+      const warehouseId = document.getElementById('location').value;
+      fetchProductsStockValue(warehouseId);
+    }
+    
+    fetchProductsStockValue(0);
+    </script>
+    
 <section class="menu">
   <h1><%= stats.location %></h1>
   <section class="dropdowns">
