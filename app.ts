@@ -1,7 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, getShipments, countIncomingShipments, countOutgoingShipments, } from "./db-warehouse";
+import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -79,7 +79,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
 
   const warehouses: Warehouse[] = await fetchWarehouses();
   const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
-  const totalOrders = await countOrders(startDate, endDate, warehouseId);
+  const totalOrders = await countOrders_Optimized(startDate, endDate, warehouseId);
 
   //Totale waarde van alle items op voorraad
   const totalInventoryValue = (warehouseId: number) => {
@@ -115,7 +115,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
   const turnoverRate: number = Number((inventoryValue / ordersValue).toFixed(1));
 
 
-  const delayedOrders = await countDelayedOrders(startDate, endDate, warehouseId);
+  const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate, warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
@@ -201,10 +201,10 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
 
   const warehouses: Warehouse[] = await fetchWarehouses();
   const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
-  const totalOrders = await countOrders(startDate, endDate, warehouseId);
+  const totalOrders = await countOrders_Optimized(startDate, endDate, warehouseId);
 
   // LOGIC STAT CARDS
-  const delayedOrders = await countDelayedOrders(startDate, endDate ,warehouseId);
+  const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate ,warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
@@ -256,7 +256,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
 
   const shipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
   const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
-  const outgoingShipments = await countOutgoingShipments(startDate, endDate, warehouseId);
+  const outgoingShipments = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
 
   const chartData = [
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
