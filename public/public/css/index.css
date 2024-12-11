@@ -109,8 +109,37 @@
     box-shadow: 1px 3px #acb1b6;
     background-color: #fff;
 }
-/* MEEST VERKOCHT PLACEHOLDER */
-table {
+
+
+/* GRID.JS */
+
+.grid-js-table th {
+    background-color: var(--logimax-blue);
+    color: #fff;
+}
+
+.grid-js-table img {
+    max-height: 100px;
+    width: 100px;
+}
+
+.grid-js-table tr:hover td {
+    background-color: #d9eafb;
+}
+
+.grid-js-table td {
+    vertical-align: middle;
+}
+
+.gridjs-footer {
+    background-color: var(--logimax-blue);    
+}
+
+.gridjs-summary {
+    color: #fff;
+}
+
+/*table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
@@ -140,7 +169,7 @@ tbody td {
     text-align: left;
 }*/
 
-tbody tr td:nth-child(4), tbody tr td:nth-child(5) {
+/*tbody tr td:nth-child(4), tbody tr td:nth-child(5) {
     font-weight: bold;
 }
 
@@ -150,4 +179,4 @@ tbody tr:nth-child(even) {
 
 tbody tr:hover {
     background-color: #d9eafb;
-}
+}*/
