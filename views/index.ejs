@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
   <script>
-async function fetchProductsStockValue(warehouseId) {
+async function fetchAndRenderVoorraadOmzetChart(warehouseId) {
   try {
     const response = await fetch(`/api/products-stock-value?warehouseId=${warehouseId}`);
     if (!response.ok) {
@@ -24,71 +24,35 @@ async function fetchProductsStockValue(warehouseId) {
 
     const data = await response.json();
     console.log(`Fetched data for warehouse ${warehouseId}:`, data);
-    return data;
 
     if (!data.length) {
       console.error("No data available for chart.");
       return;
     }
-    return data;
 
     vegaEmbed("#voorraadOmzet", {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "description": "Line chart showing incoming and outgoing shipments for different warehouses with interactive selection.",
-    "width": "container",
-    "data": {
-        "values": data
-    },
-    "selection": {
-        "warehouseSelection": {
-            "type": "multi",
-            "fields": ["title"],
-            "bind": "legend"
-        }
-    },
-    "mark": {
-        "type": "bar",
-    },
-    "encoding": {
-        "x": {
-          "field": "title",
-            "type": "ordinal",
-            "axis": null 
-        },
-        "y": {
-          "field": "quantity",
-            "type": "quantitative",
-            "axis": { "title": "Quantity" }
-        },
-        "color": {
-          "field": "title",
-            "type": "nominal",
-            "legend": { "title": "Product" }
-        },
-        "opacity": {
-            "condition": { "selection": "warehouseSelection", "value": 1 },
-            "value": 0.2
-        },
-        "detail": {
-            "field": "type",
-            "type": "nominal"
-        }
-    }
-    
-});
+      "description": `Voorraad Omzet Chart for Warehouse ${warehouseId}`,
+      "data": { "values": data },
+      "mark": "bar",
+      "encoding": {
+        "x": { "field": "title", "type": "ordinal", "axis": { "title": "Product Name", "labelAngle": -45 } },
+        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Quantity" } },
+        "color": { "field": "title", "type": "nominal", "legend": { "title": "Product" } }
+      }
+    });
   } catch (error) {
     console.error("Error fetching voorraad omzet data:", error);
   }
 }
-    
-    function changeWarehouse() {
-      const warehouseId = document.getElementById('location').value;
-      fetchProductsStockValue(warehouseId);
-    }
-    
-    fetchProductsStockValue(0);
-    </script>
-    
+
+function changeWarehouse() {
+  const warehouseId = document.getElementById('location').value;
+  fetchAndRenderVoorraadOmzetChart(warehouseId);
+}
+
+fetchAndRenderVoorraadOmzetChart(0);
+  </script>
 <section class="menu">
   <h1><%= stats.location %></h1>
   <section class="dropdowns">
@@ -167,9 +131,13 @@ async function fetchProductsStockValue(warehouseId) {
         </div>
     </section>
 </article>
+
 <article>
     <h2>Meest Verkocht</h2>
     <section class="thirdrow">
+      
+      <div id="grid-js-table"></div>
+
         <div class="placeholder">
             <table id="product-table" border="1">
                 <thead>
@@ -206,8 +174,47 @@ async function fetchProductsStockValue(warehouseId) {
         </div>
     </section>
 </article>
-<%- include("partials/doc-end")%>
+
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script>
+  const products = <%- JSON.stringify(productSalesData) %>;
+
+// Format data for Grid.js
+const gridData = products.map(product => [
+  `<img src="${product.image}" alt="Product Image" width="50" />`,
+  product.id,
+  `<a href="${product.link}" target="_blank">${product.title}</a>`,  
+  product.totalUnitsSold,
+  product.totalRevenue
+]);
+
+// Initialize Grid.js
+new gridjs.Grid({
+  columns: [
+    {
+      name: "Product Image",
+      formatter: (cell) => gridjs.html(cell)
+    },
+    "Product ID",
+    {
+      name: "Product Name",
+      formatter: (cell) => gridjs.html(cell)
+    },
+    "Units Sold",
+    "Total Revenue"
+  ],
+  data: gridData,
+  pagination: {
+    enabled: true,
+    limit: 5
+  },
+  sort: true,
+  search: true
+    }).render(document.getElementById("grid-js-table"));
 </script>
+
+<%- include("partials/doc-end")%>
 <!-- CHART SCRIPTS  -->
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="/js/dashboard-charts.js"></script>
+<script src="/public/js/dashboard-charts.js"></script>

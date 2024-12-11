@@ -1,16 +1,25 @@
 <%- include("partials/header-nav")%>
+
+<!-- Vega-Lite and Vega Embed Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/vega@5.21.0"></script> <!-- Vega (Core library) -->
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.0"></script> <!-- Vega-Lite (Visualization library) -->
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.21.0"></script> <!-- Vega Embed library for embedding charts -->
+
 <script>
     console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
 </script>
+
 <!-- JS CALENDAR SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+
 <script>
     function changeWarehouse() {
-      const selectedWarehouse = document.getElementById('location').value;
-      window.location.href = `/voorraad?warehouseId=${selectedWarehouse}`;
+        const selectedWarehouse = document.getElementById('location').value;
+        window.location.href = `/voorraad?warehouseId=${selectedWarehouse}`;
     }
-  </script>
+</script>
+
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
@@ -79,10 +88,8 @@
             <% for (let w of warehouses) { %>
                 <option value="<%= w.warehouse_id %>" <%= warehouseId == w.warehouse_id ? 'selected' : '' %> >
                     <%= w.location %>
-                  </option>
+                </option>
             <% } %>
-            <!--<option value="New York">New York</option>
-            <option value="Los Angeles">Los Angeles</option>-->
         </select>
         <input type="text" id="date_range" placeholder="Selecteer Datumbereik" />
         <button onclick="filterData()">Filter</button>
@@ -94,59 +101,128 @@
                     firstDayOfWeek: 1 // Start the week on Monday
                 }
             });
-    // Filter data based on date range
-    function filterData() {
-        const selectedWarehouse = document.getElementById('location').value;
-        const dateRange = document.getElementById('date_range').value;
+            // Filter data based on date range
+            function filterData() {
+                const selectedWarehouse = document.getElementById('location').value;
+                const dateRange = document.getElementById('date_range').value;
 
-        if (!dateRange) {
-            alert("Selecteer een datumbereik!");
-            return;
-        }
+                if (!dateRange) {
+                    alert("Selecteer een datumbereik!");
+                    return;
+                }
 
-         const dates = dateRange.split(" to ");
-         const startDate = dates[0];
-         const endDate = dates[1] || startDate;
+                const dates = dateRange.split(" to ");
+                const startDate = dates[0];
+                const endDate = dates[1] || startDate;
 
-         window.location.href = `/voorraad?warehouseId=${selectedWarehouse}&startDate=${startDate}&endDate=${endDate}`;
-    }
+                window.location.href = `/voorraad?warehouseId=${selectedWarehouse}&startDate=${startDate}&endDate=${endDate}`;
+            }
         </script>
     </section>
 </section>
+
 <h1><%= startDate %> tot en met <%= endDate %></h1>
+
 <article>
     <h2>Ruimtegebruik</h2>
     <section class="firstrow">
+        <!-- Space utilization donut chart -->
         <div class="statcard">
-            <canvas id="Ruimtegebruik" width="" height=""></canvas>
+            <div id="Ruimtegebruik" width="300" height="300"></div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get space utilization data from EJS
+                const spaceUtilization = <%= stats.spaceUtilization %>;
+                const freeSpacePercentage = 100 - spaceUtilization; // Calculate free space percentage
+                const unavailableSpacePercentage = spaceUtilization; // Unavailable space is equal to spaceUtilization
+
+                // Vega-Lite specification for donut chart
+                const spec = {
+                    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                    "description": "Donut chart showing space utilization",
+                    "width": 200,
+                    "height": 200,
+                    "data": {
+                        "values": [
+                            { "category": `${freeSpacePercentage}% Beschikbaar`, "value": freeSpacePercentage },
+                            { "category": `${unavailableSpacePercentage}% In gebruik`, "value": unavailableSpacePercentage }
+                        ]
+                    },
+                    "mark": {
+                        "type": "arc",
+                        "innerRadius": 90, // Hole size for the donut chart (make sure it's not too big)
+                        "outerRadius": 100 // Outer radius of the donut
+                    },
+                    "encoding": {
+                        "theta": { "field": "value", "type": "quantitative" },
+                        "color": {
+                            "field": "category",
+                            "type": "nominal",
+                            "scale": {
+                                "domain": [
+                                    `${freeSpacePercentage}% Beschikbaar`,
+                                    `${unavailableSpacePercentage}% In gebruik`
+                                ],
+                                "range": ["#3de0c6", "#3E3DE0"] // colors for free and unavailable space
+                            },
+                            "legend": {
+                                "title": "Ruimtegebruik",
+                                "orient": "bottom",
+                                "direction": "vertical"
+                            }
+                        }
+                    },
+                    "view": { "stroke": null },
+                    "config": {
+                        "legend": {
+                            "symbolSize": 150,
+                            "labelFontSize": 12,
+                            "titleFontSize": 14
+                        }
+                    }
+                };
+
+                // Embed the Vega-Lite chart into the HTML container with ID 'Ruimtegebruik'
+                vegaEmbed('#Ruimtegebruik', spec);
+            });
+        </script>
+
+        <!-- Total inventory value -->
         <div class="statcard">
             <i></i>
-            <h2>1.5</h2>
-            <p>Omzet</p>
+            <h2><%= stats.inventoryValue %> Є</h2>
+            <p>Totale waarde van voorraad</p>
         </div>
+
+        <!-- Available space -->
         <div class="statcard">
             <i></i>
-            <h2>1527</h2>
+            <h2><%= stats.spaceUtilization %>%</h2>
             <p>Beschikbare Ruimte</p>
-            <p>3237/4800</p>
+            <p></p>
         </div>
     </section>
 </article>
+
 <article>
     <h2>Voorraad Omzet</h2>
     <section class="secondrow">
         <div class="placeholder" id="voorraadOmzet"></div>
     </section>
 </article>
+
 <article>
     <h2>Meest Verkocht</h2>
-<section class="thirdrow">
-    <div class="placeholder"> <canvas id="voorraadOmzet" width="" height=""></canvas></div>
-</section>
+    <section class="thirdrow">
+        <div class="placeholder"> <canvas id="voorraadOmzet" width="" height=""></canvas></div>
+    </section>
 </article>
+
 <%- include("partials/doc-end")%>
-<!-- CHART SCRIPTS  -->
+
+<!-- CHART SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/dashboard-charts.js"></script>
 <script src="/js/voorraadOmzetChart.js"></script>
