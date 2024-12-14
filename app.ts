@@ -161,9 +161,15 @@ app.get('/home', secureMiddleware, async (req, res) => {
       price: product.price.actualPrice === null ? product.price.discountPrice : product.price.actualPrice,
       totalUnitsSold: product.quantity,
       totalRevenue: Math.round(product.price.discountPrice * product.quantity),
-      currency: product.price.currency
+      currency: product.price.currency,
+      currentStock: Math.round(getRandomNumber(10, 200)),
+      get currentStockLevel() {
+        if (this.currentStock < 60) return "low";
+        if (this.currentStock < 120) return "medium";
+        return "high";
+      }
     };
-  
+    //currentStockLevel: currentStock < 60 ?
     productSalesData.push(productForTable);
   }
 

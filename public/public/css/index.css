@@ -131,12 +131,22 @@
     vertical-align: middle;
 }
 
+.grid-js-table td:last-child {
+    text-align: center;
+}
+
 .gridjs-footer {
     background-color: var(--logimax-blue);    
 }
 
 .gridjs-summary {
     color: #fff;
+}
+
+.stock-niveau {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 /*table {

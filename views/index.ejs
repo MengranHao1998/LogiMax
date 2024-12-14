@@ -285,65 +285,70 @@ async function fetchProductsStockValue(warehouseId) {
 <script>
   const products = <%- JSON.stringify(productSalesData) %>;
 
-// Format data for Grid.js
-const gridData = products.map(product => [
-  `<a href="${product.link}" target="_blank"><img src="${product.image}" alt="Product Image" width="50" /></a>`,
-  product.id,
-  `<a href="${product.link}" target="_blank">${product.title}</a>`,  
-  product.totalUnitsSold,
-  product.totalRevenue
-]);
+  // Format data for Grid.js
+  const gridData = products.map(product => [
+    `<a href="${product.link}" target="_blank"><img src="${product.image}" alt="Product Image" width="50" /></a>`,
+    product.id,
+    `<a href="${product.link}" target="_blank">${product.title}</a>`,  
+    product.totalUnitsSold,
+    product.totalRevenue,
+    `<span class="${product.currentStockLevel} stock-niveau">${product.currentStockLevel} (${product.currentStock})</span>`
+  ]);
 
-// Initialize Grid.js
-new gridjs.Grid({
-  columns: [
-    {
-      name: "Afbeelding",
-      formatter: (cell) => gridjs.html(cell)
+  // Initialize Grid.js
+  new gridjs.Grid({
+    columns: [
+      {
+        name: "Afbeelding",
+        formatter: (cell) => gridjs.html(cell)
+      },
+      "Product ID",
+      {
+        name: "Naam",
+        formatter: (cell) => gridjs.html(cell)
+      },
+      {
+        name: "Verkochte eenheden",
+        width: "100px"
+      },
+      "Totale Omzet",
+      {
+        name: "Stock Niveau",
+        formatter: (cell) => gridjs.html(cell)
+      }
+    ],
+    data: gridData,
+    pagination: {
+      enabled: true,
+      limit: 10
     },
-    "Product ID",
-    {
-      name: "Naam",
-      formatter: (cell) => gridjs.html(cell)
+    sort: true,
+    search: true,
+    resizable: true,
+    width: '80%',
+    style: {
+      th: {
+        'background-color': '#0469C8',
+        'color': '#FFF'
+      }
     },
-    {
-      name: "Verkochte eenheden",
-      width: "100px"
+    language: {
+      'search': {
+        'placeholder': '🔍 Zoeken...'
+      },
+      'pagination': {
+        'previous': 'Vorige',
+        'next': 'Volgende',
+        'showing': 'Afbeelden: ',
+        'results': () => 'resultaten',
+        'of': 'van',
+        'to': 'tot',
+      }
     },
-    "Totale Omzet"
-  ],
-  data: gridData,
-  pagination: {
-    enabled: true,
-    limit: 10
-  },
-  sort: true,
-  search: true,
-  resizable: true,
-  width: '80%',
-  style: {
-    th: {
-      'background-color': '#0469C8',
-      'color': '#FFF'
+    className: {
+      table: 'grid-js-table'
     }
-  },
-  language: {
-    'search': {
-      'placeholder': '🔍 Zoeken...'
-    },
-    'pagination': {
-      'previous': 'Vorige',
-      'next': 'Volgende',
-      'showing': 'Afbeelden: ',
-      'results': () => 'resultaten',
-      'of': 'van',
-      'to': 'tot',
-    }
-  },
-  className: {
-    table: 'grid-js-table'
-  }
-    }).render(document.getElementById("grid-js-table"));
+      }).render(document.getElementById("grid-js-table"));
 </script>
 
 <%- include("partials/doc-end")%>
