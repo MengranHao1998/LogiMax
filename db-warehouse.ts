@@ -130,7 +130,7 @@ export async function countOutgoingShipments_Optimized(startDate: string, endDat
     });
 }
 
-export async function fetchWarehouses() {
+/*export async function fetchWarehouses() {
     const response = await fetch("https://logimax-api.onrender.com/warehouses/", {
         method: "GET",
         headers: {
@@ -138,6 +138,12 @@ export async function fetchWarehouses() {
           "authorization": "logimax-admin"
         }
     });
+    const data = await response.json();
+    return data;
+}*/
+
+export async function fetchWarehouses() {
+    const response = await fetch("https://raw.githubusercontent.com/MengranHao1998/LogiMax/refs/heads/main/warehouses.json");
     const data = await response.json();
     return data;
 }

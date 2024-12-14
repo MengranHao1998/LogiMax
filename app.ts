@@ -153,6 +153,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
   let productSalesData: ProductTableInformation[] = [];
   
   for (let product of allSoldProducts) {
+    const productId = product.id;
     const productForTable: ProductTableInformation = {
       id: product.id,
       title: product.title,
@@ -162,14 +163,13 @@ app.get('/home', secureMiddleware, async (req, res) => {
       totalUnitsSold: product.quantity,
       totalRevenue: Math.round(product.price.discountPrice * product.quantity),
       currency: product.price.currency,
-      currentStock: Math.round(getRandomNumber(10, 200)),
+      currentStock: warehouses[warehouseId - 1].products.find((x) => x.id === productId)?.quantity || 0/*Math.round(getRandomNumber(10, 200))*/,
       get currentStockLevel() {
         if (this.currentStock < 60) return "low";
         if (this.currentStock < 120) return "medium";
         return "high";
       }
     };
-    //currentStockLevel: currentStock < 60 ?
     productSalesData.push(productForTable);
   }
 
@@ -213,14 +213,14 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   //LOGIC TURNOVER RATE
   const totalInventoryValue = (warehouseId: number) => {
     let totalValue: number = 0;
-    const chosenWarehouseProducts: Product[] = warehouses[warehouseId].products;
+    const chosenWarehouseProducts: Product[] = warehouses[warehouseId - 1].products;
 
     for (let p of chosenWarehouseProducts) {
       let price: number = p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice;
       let subtotal: number = price * p.quantity;
       totalValue += subtotal;
     }
-    return totalValue;
+    return Math.floor(totalValue);
   }
   // LOGIC STAT CARDS
   const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate ,warehouseId);
