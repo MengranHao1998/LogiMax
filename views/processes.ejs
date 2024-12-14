@@ -81,50 +81,49 @@
     <section class="secondrow">
         <div id="chart"></div>
         <script>
-
-    // Vega-Lite Specification
-    const chartSpec = {
-        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-        "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
-        "data": {
-            "values": [
-      <% shipmentData.forEach((item, index) => { %>
-        { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < shipmentData.length - 1 ? ',' : '' %>
-      <% }); %>
-    ]
-        },
-        "mark": "bar",
-        "encoding": {
-            "x": {
-                "field": "Date",
-                "type": "ordinal",
-                "axis": {"title": "Date"}
-            },
-            "xOffset": {
-                "field": "Type" // Offsets bars within each date group based on Type
-            },
-            "y": {
-                "field": "Shipments",
-                "type": "quantitative",
-                "axis": {"title": "Aantal"}
-            },
-            "color": {
-                "field": "Type",
-                "type": "nominal",
-                "scale": {"scheme": "category10"},
-                "legend": {"title": "Shipment Type"}
-            }
-        },
-        "config": {
-            "bar": {
-                "width": 20 // Adjust the width of each bar for better spacing
-            }
-        }
-    };
-
-    // Embed the chart
-    vegaEmbed('#chart', chartSpec).catch(console.error);
-          </script>
+            // Vega-Lite Specification
+            const chartSpec = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
+                "data": {
+                    "values": [
+                        <% shipmentData.forEach((item, index) => { %>
+                            { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < shipmentData.length - 1 ? ',' : '' %>
+                        <% }); %>
+                    ]
+                },
+                "mark": "bar",
+                "encoding": {
+                    "x": {
+                        "field": "Date",
+                        "type": "ordinal",
+                        "axis": {"title": "Date"}
+                    },
+                    "xOffset": {
+                        "field": "Type" // Offsets bars within each date group based on Type
+                    },
+                    "y": {
+                        "field": "Shipments",
+                        "type": "quantitative",
+                        "axis": {"title": "Aantal"}
+                    },
+                    "color": {
+                        "field": "Type",
+                        "type": "nominal",
+                        "scale": {"scheme": "category10"},
+                        "legend": {"title": "Shipment Type"}
+                    }
+                },
+                "config": {
+                    "bar": {
+                        "width": 20 // Adjust the width of each bar for better spacing
+                    }
+                }
+            };
+        
+            // Embed the chart
+            vegaEmbed('#chart', chartSpec).catch(console.error);
+        </script>
     </section>
 </article>
 <article>

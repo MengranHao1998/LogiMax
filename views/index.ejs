@@ -228,10 +228,13 @@ async function fetchProductsStockValue(warehouseId) {
     <section class="secondrow">
         <div class="placeholder" id="voorraadOmzet"></div>
         <div class="statcard">
-            <i></i>
-            <h2><%= stats.turnoverRate %></h2>
-            <p>Turnover rate</p>
-        </div>
+          <i></i>
+          <h2><%= stats.turnoverRate %></h2>
+          <p>Turnover rate</p>
+          <h2 class="dynamic-word <%= stats.turnoverRate < 10 ? 'high' : (stats.turnoverRate >= 10 && stats.turnoverRate <= 15 ? 'medium' : 'low') %>">
+              <%= stats.turnoverRate < 10 ? 'GOED' : (stats.turnoverRate >= 10 && stats.turnoverRate <= 15 ? 'MATIG' : 'SLECHT') %>
+          </h2>
+      </div>
     </section>
 </article>
 <article>
