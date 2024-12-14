@@ -1,7 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, } from "./db-warehouse";
+import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -257,8 +257,9 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   const location = warehouses[warehouseId - 1].location;
 
   const shipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
-  const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
+  const incomingShipments = Math.floor(await countIncomingShipments(startDate, endDate, warehouseId));
   const outgoingShipments = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
+  const shipmentsOnTheWay: number = Math.floor(outgoingShipments * getRandomNumber(0.5, 0.8));
 
   const chartData = [
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
@@ -289,6 +290,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
       shipments,
       incomingShipments,
       outgoingShipments,
+      shipmentsOnTheWay,
       location
     }
   }); 
