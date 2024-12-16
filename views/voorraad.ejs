@@ -128,7 +128,7 @@
     <section class="firstrow">
         <!-- Space utilization donut chart -->
         <div class="statcard">
-            <div id="Ruimtegebruik" width="300" height="300"></div>
+            <div id="Ruimtegebruik" style="width: 100%; max-width: 300px; height: 300px;"></div>
         </div>
 
         <script>
@@ -142,7 +142,7 @@
                 const spec = {
                     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
                     "description": "Donut chart showing space utilization",
-                    "width": 200,
+                    "width": "container",
                     "height": 200,
                     "data": {
                         "values": [
