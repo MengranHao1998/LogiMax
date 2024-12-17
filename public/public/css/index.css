@@ -57,6 +57,10 @@
     background-color: #fff;
 }
 
+.voorraad-page .firstrow .statcard { /*ENKL VOOR STATCARDS IN VOORAAD.EJS PAGINA ANDERS CSS PROBLEEM MET RUIMTE GEBRUIK CHART*/
+    width: 17rem; /* Set custom width for the statcard */
+}
+
 .firstrow .statcard:nth-child(1) i,.firstrow .statcard:nth-child(2) i {
     display: inline-block;
     width: 30px;

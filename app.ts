@@ -84,6 +84,16 @@ app.get('/home', secureMiddleware, async (req, res) => {
   const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
   const totalOrders = await countOrders_Optimized(startDate, endDate, warehouseId);
 
+  //Totale stock quantity voor het magazijn
+  let totalStockQuantity = 0;
+  const chosenWarehouseProducts: Product[] = warehouses[warehouseId - 1].products;
+  for (let p of chosenWarehouseProducts) {
+    totalStockQuantity += p.quantity;
+  }
+  // Calculate warehouse utilization
+  const warehouseCapacity = warehouses[warehouseId - 1].warehouse_capacity;
+  const warehouseUtilization = totalStockQuantity / warehouseCapacity;
+  const warehouseUtilizationPercentage = Math.round(warehouseUtilization * 100); // percentage value
   //Totale waarde van alle items op voorraad
   const totalInventoryValue = (warehouseId: number) => {
     let totalValue: number = 0;
@@ -112,6 +122,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
     }
     return totalValue;
   }
+  
   
   const ordersValue: number = totalOrdersValue(warehouseId);
   const inventoryValue: number = totalInventoryValue(warehouseId);
@@ -189,7 +200,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
       onTimePercentage,
       spaceUtilization,
       location,
-      turnoverRate     
+      turnoverRate,
+      warehouseUtilization: warehouseUtilizationPercentage, // Add warehouse utilization here
     },
     productSalesData
   }); // activePage => voor gebruik nav item
@@ -211,6 +223,16 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   const warehouses: Warehouse[] = await fetchWarehouses();
   const orders: Order[] = await getOrders(startDate, endDate, warehouseId);
   const totalOrders = await countOrders_Optimized(startDate, endDate, warehouseId);
+   // Calculate total stock quantity for the warehouse
+   let totalStockQuantity = 0;
+   const chosenWarehouseProducts: Product[] = warehouses[warehouseId - 1].products;
+   for (let p of chosenWarehouseProducts) {
+     totalStockQuantity += p.quantity;
+   }
+    // Calculate warehouse utilization
+  const warehouseCapacity = warehouses[warehouseId - 1].warehouse_capacity;
+  const warehouseUtilization = totalStockQuantity / warehouseCapacity;
+  const warehouseUtilizationPercentage = Math.round(warehouseUtilization * 100); // percentage value
   //LOGIC TURNOVER RATE
   const totalInventoryValue = (warehouseId: number) => {
     let totalValue: number = 0;
@@ -221,14 +243,26 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
       let subtotal: number = price * p.quantity;
       totalValue += subtotal;
     }
-    return Math.floor(totalValue);
+    return Math.floor(totalValue).toLocaleString('nl-NL');
   }
+  //Totale voorraad per magazijn berekenen
+  const totalStockPerWarehouse = (warehouseId: number) => {
+    const warehouse = warehouses[warehouseId - 1];
+    let totalStock = 0;
+
+    for (const product of warehouse.products) {
+        totalStock += product.quantity;
+    }
+
+    return totalStock;
+};
   // LOGIC STAT CARDS
   const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate ,warehouseId);
   const onTimePercentage = Math.round(((totalOrders - delayedOrders) / totalOrders) * 100);
   const spaceUtilization = Math.round((warehouses[warehouseId - 1].space_utilization || 0) * 100);
   const location = warehouses[warehouseId - 1].location;
   const inventoryValue = totalInventoryValue(warehouseId);
+  const inventoryStock = totalStockPerWarehouse(warehouseId);
 
   res.render('voorraad', {
     activePage: 'voorraad',
@@ -242,8 +276,10 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
       delayedOrders,
       onTimePercentage,
       spaceUtilization,
+      warehouseUtilization: warehouseUtilizationPercentage, // Add warehouse utilization here
       location,
-      inventoryValue
+      inventoryValue,
+      inventoryStock
     }
   }); // activePage => voor gebruik nav item
 });

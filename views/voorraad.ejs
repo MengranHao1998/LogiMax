@@ -1,3 +1,4 @@
+<body class="voorraad-page">
 <%- include("partials/header-nav")%>
 
 <!-- Vega-Lite and Vega Embed Scripts -->
@@ -150,15 +151,15 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                // Get space utilization data from EJS
-                const spaceUtilization = <%= stats.spaceUtilization %>;
-                const freeSpacePercentage = 100 - spaceUtilization; // Calculate free space percentage
-                const unavailableSpacePercentage = spaceUtilization; // Unavailable space is equal to spaceUtilization
-
+                // Get warehouse utilization data from EJS
+                const warehouseUtilization = <%= stats.warehouseUtilization %>;
+                const freeSpacePercentage = 100 - warehouseUtilization; 
+                const unavailableSpacePercentage = warehouseUtilization;
+        
                 // Vega-Lite specification for donut chart
                 const spec = {
                     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-                    "description": "Donut chart showing space utilization",
+                    "description": "Donut chart showing warehouse utilization",
                     "width": "container",
                     "height": 200,
                     "data": {
@@ -200,24 +201,24 @@
                         }
                     }
                 };
-
+        
                 // Embed the Vega-Lite chart into the HTML container with ID 'Ruimtegebruik'
                 vegaEmbed('#Ruimtegebruik', spec);
             });
-        </script>
+        </script>        
 
         <!-- Total inventory value -->
         <div class="statcard">
             <i></i>
-            <h2><%= stats.inventoryValue %> Є</h2>
+            <h2><%= stats.inventoryValue %>Є</h2>
             <p>Totale waarde van voorraad</p>
         </div>
 
         <!-- Available space -->
         <div class="statcard">
             <i></i>
-            <h2><%= stats.spaceUtilization %>%</h2>
-            <p>Beschikbare Ruimte</p>
+            <h2><%= stats.inventoryStock %></h2>
+            <p>Totaal aantal producten</p>
             <p></p>
         </div>
     </section>
@@ -244,3 +245,4 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/js/dashboard-charts.js"></script>
 <script src="/js/voorraadOmzetChart.js"></script>
+</body>
