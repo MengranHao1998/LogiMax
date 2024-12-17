@@ -133,5 +133,5 @@ nav li:last-child a {
     grid-area: main;
     background-color: var(--background-almost-grey);
     color: var(--text-color);
-    padding: 50px 70px;
+    padding: 50px 200px 50px 70px;
 }

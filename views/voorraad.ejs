@@ -42,7 +42,7 @@
     vegaEmbed("#top5VoorraadOmzet", {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "width": "container",
-      "title": "Top 5 Voorraad Omzet",
+      "title": "Stock niveau: Top 5",
       "description": `Top 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
       "data": { "values": top5Data },
       "mark": "bar",
@@ -62,7 +62,7 @@
     // Configuratie voor de Bottom 5 grafiek
     vegaEmbed("#bottom5VoorraadOmzet", {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "title": "Bottom 5 Voorraad Omzet",
+      "title": "Stock niveau: Bottom 5",
       "width": "container",
       "description": `Bottom 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
       "data": { "values": bottom5Data },
@@ -144,7 +144,7 @@
 <h1><%= startDate %> tot en met <%= endDate %></h1>
 
 <article>
-    <h2>Ruimtegebruik</h2>
+    <h2>Overview</h2>
     <section class="firstrow">
         <!-- Space utilization donut chart -->
         <div class="statcard">
@@ -227,17 +227,10 @@
 </article>
 
 <article>
-    <h2>Voorraad Omzet</h2>
+    <h2>Stock niveaus: Top 5 & Bottom 5</h2>
     <section class="secondrow">
         <div class="placeholder" id="top5VoorraadOmzet"></div>
         <div class="placeholder" id="bottom5VoorraadOmzet"></div>
-    </section>
-</article>
-
-<article>
-    <h2>Meest Verkocht</h2>
-    <section class="thirdrow">
-        <div class="placeholder"> <canvas id="voorraadOmzet" width="" height=""></canvas></div>
     </section>
 </article>
 
