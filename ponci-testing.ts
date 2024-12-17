@@ -232,22 +232,26 @@ console.log("----------------------------------------------------------");
       const eData: EmployeePerformanceMetrics = {
         employeeId: e.employee_id,
         employeeName: e.firstName + " " + e.lastName,    
-        completedOrders: await getOrdersByEmployee(e.employee_id),
-        amountOfCompletedOrders: await getAmountOfOrdersByEmployee(e.employee_id)
+        completedOrders: await getOrdersByEmployee(startDate, endDate, e.employee_id),
+        amountOfCompletedOrders: await getAmountOfOrdersByEmployee(startDate, endDate, e.employee_id)
       };
   
       employeePerformanceData.push(eData);
     }    
   }
 
-  for (let i of employeePerformanceData) {
+  /*for (let i of employeePerformanceData) {
     console.log("\n------------------------------------------------------");
     console.log(i.employeeId);
     console.log(i.employeeName);
     console.log("Amount of orders completed: " + i.amountOfCompletedOrders);
     console.log("------------------------------------------------------\n");
   }
-  console.log("Employees: " + employeePerformanceData.length);
+  console.log("Employees: " + employeePerformanceData.length);*/
+
+  let i = await getAmountOfOrdersByEmployee(startDate, endDate, "2--4");
+  let j = await getAmountOfOrdersByEmployee("03-12-2024", "03-12-2024", "2--4");
+  console.log(i + "\n" + j);
 }
 
 

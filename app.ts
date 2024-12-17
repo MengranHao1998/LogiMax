@@ -1,7 +1,8 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation, WarehouseProductStockValue, EmployeePerformanceMetrics } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber } from "./db-warehouse";
+import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber,
+getAmountOfOrdersByEmployee, getOrdersByEmployee } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -279,6 +280,22 @@ app.get('/processes',secureMiddleware, async (req, res) => {
         );
     }
 
+  // WERKNEMERSPRESTATIES LOGIC
+  let employeePerformanceData: EmployeePerformanceMetrics[]  = [];
+  
+    for (let e of warehouses[warehouseId - 1].employees) {
+      if (e.department === "warehouse_employee") {
+        const eData: EmployeePerformanceMetrics = {
+          employeeId: e.employee_id,
+          employeeName: e.firstName + " " + e.lastName,    
+          completedOrders: await getOrdersByEmployee(startDate, endDate, e.employee_id),
+          amountOfCompletedOrders: await getAmountOfOrdersByEmployee(startDate, endDate, e.employee_id)
+        };
+    
+        employeePerformanceData.push(eData);
+      }    
+    }
+
   res.render('processes', {
     activePage: 'processes',
     warehouses,
@@ -293,7 +310,8 @@ app.get('/processes',secureMiddleware, async (req, res) => {
       outgoingShipments,
       shipmentsOnTheWay,
       location
-    }
+    },
+    employeePerformanceData
   }); 
 });
 

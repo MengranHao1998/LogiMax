@@ -78,12 +78,21 @@ export async function countDelayedOrders_Optimized(startDate: string, endDate: s
     });
 }
 
-export async function getOrdersByEmployee(id: string) {
-    return await ordersCollection.find({employee_id: id}).toArray();
+export async function getOrdersByEmployee(startDate: string, endDate: string, id: string) {
+    return await ordersCollection.find({
+        employee_id: id,
+        order_date: {
+            $gte: startDate, // Greater than or equal to startDate
+            $lte: endDate  // Less than or equal to endDate
+        },
+    }).toArray();
 }
 
-export async function getAmountOfOrdersByEmployee(id: string) {
-    return ordersCollection.countDocuments({employee_id: id});
+export async function getAmountOfOrdersByEmployee(startDate: string, endDate: string, id: string) {
+    return ordersCollection.countDocuments({
+        employee_id: id,
+        order_date: { $gte: startDate, $lte: endDate }
+    });
 }
 
 //SHIPMENTS

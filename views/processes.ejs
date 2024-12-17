@@ -129,13 +129,66 @@
 <article>
     <h2>Werknemersprestaties</h2>
     <section class="secondrow">
-        <canvas id="werknemerPrestaties" width="200px" height="200px"></canvas>
+        <div id="grid-js-table"></div>
+        <!--<canvas id="werknemerPrestaties" width="200px" height="200px"></canvas>
         <div style="text-align: center; margin-top: 20px;">
             <button id="sortById">Sorteer op ID</button>
             <button id="sortByOrders">Sorteer op Orders (Hoog naar laag)</button>
-        </div>
+        </div>-->
     </section>
 </article>
+
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script>
+  const employeesPerformance = <%- JSON.stringify(employeePerformanceData) %>;
+
+  // Format data for Grid.js
+  const gridData = employeesPerformance.map(employee => [
+    employee.employeeId,
+    employee.employeeName,
+    employee.amountOfCompletedOrders
+  ]);
+
+  // Initialize Grid.js
+  new gridjs.Grid({
+    columns: [
+      "ID werknemer",
+      "Naam werknemer",
+      "Aantal voltooide bestellingen"
+    ],
+    data: gridData,
+    pagination: {
+      enabled: true,
+      limit: 10
+    },
+    sort: true,
+    search: true,
+    width: '80%',
+    style: {
+      th: {
+        'background-color': '#0469C8',
+        'color': '#FFF'
+      }
+    },
+    language: {
+      'search': {
+        'placeholder': '🔍 Zoeken...'
+      },
+      'pagination': {
+        'previous': 'Vorige',
+        'next': 'Volgende',
+        'showing': 'Afbeelden: ',
+        'results': () => 'resultaten',
+        'of': 'van',
+        'to': 'tot',
+      }
+    },
+    className: {
+      table: 'grid-js-table'
+    }
+      }).render(document.getElementById("grid-js-table"));
+</script>
+
 <%- include("partials/doc-end")%>
 <!-- CHART SCRIPTS  -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
