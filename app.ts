@@ -1,8 +1,7 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation, WarehouseProductStockValue, EmployeePerformanceMetrics } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber,
-getAmountOfOrdersByEmployee, getOrdersByEmployee } from "./db-warehouse";
+import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -316,22 +315,6 @@ app.get('/processes',secureMiddleware, async (req, res) => {
         );
     }
 
-  // WERKNEMERSPRESTATIES LOGIC
-  let employeePerformanceData: EmployeePerformanceMetrics[]  = [];
-  
-    for (let e of warehouses[warehouseId - 1].employees) {
-      if (e.department === "warehouse_employee") {
-        const eData: EmployeePerformanceMetrics = {
-          employeeId: e.employee_id,
-          employeeName: e.firstName + " " + e.lastName,    
-          completedOrders: await getOrdersByEmployee(startDate, endDate, e.employee_id),
-          amountOfCompletedOrders: await getAmountOfOrdersByEmployee(startDate, endDate, e.employee_id)
-        };
-    
-        employeePerformanceData.push(eData);
-      }    
-    }
-
   res.render('processes', {
     activePage: 'processes',
     warehouses,
@@ -346,8 +329,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
       outgoingShipments,
       shipmentsOnTheWay,
       location
-    },
-    employeePerformanceData
+    }
   }); 
 });
 
@@ -357,30 +339,30 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
 
     console.log("Fetching warehouse data...");
     const warehouses: Warehouse[] = await fetchWarehouses();
-    const warehouseId = req.query.warehouseId ? parseInt(req.query.warehouseId as string, 10) : null;
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 5;
+    let warehouseId = req.query.warehouseId ? parseInt(req.query.warehouseId as string, 10) : null;
+    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 6;
 
+    // 校正索引，确保从1开始的warehouseId可以正确映射到从0开始的数组索引
+    if (warehouseId !== null) {
+      warehouseId -= 1;  // 调整warehouseId以匹配数组索引
+    }
+
+    // 检查索引是否有效
     if (warehouseId === null || isNaN(warehouseId) || warehouseId < 0 || warehouseId >= warehouses.length) {
       return res.status(400).json({ error: "Invalid warehouseId" });
     }
 
     const productsStockValue = (warehouseData: Warehouse[], warehouseId: number) => {
       let productsStockValue: WarehouseProductStockValue[] = [];
-      
       const currentProducts = warehouseData[warehouseId].products;
-      
-      // Sorteer één keer
       const sortedProducts = [...currentProducts].sort((a, b) => b.quantity - a.quantity);
-      
-      // Top X en Bottom X
       const sortedByMost = sortedProducts.slice(0, limit);
       const sortedByLeast = sortedProducts.slice(-limit).reverse();
-      
       const selectedProducts = sortedByMost.concat(sortedByLeast);
-      
+
       for (let p of selectedProducts) {
         const object: WarehouseProductStockValue = {
-          warehouseId: warehouseId,
+          warehouseId: warehouseId + 1, // 加1恢复原来的ID
           id: p.id,
           title: p.title,
           link: p.link,
@@ -390,7 +372,6 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
           totalStockValue: Math.round(p.price.discountPrice * p.quantity),
           currency: p.price.currency,
         };
-
         productsStockValue.push(object);
       }
 
@@ -398,7 +379,7 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
     };
 
     const result = productsStockValue(warehouses, warehouseId);
-    console.log(`Generated Products Stock Value for Warehouse ${warehouseId}:`, result);
+    console.log(`Generated Products Stock Value for Warehouse ${warehouseId + 1}:`, result);
 
     res.json(result);
   } catch (error) {
@@ -406,8 +387,4 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
-
-
 export {app};

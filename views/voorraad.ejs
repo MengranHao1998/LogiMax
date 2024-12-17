@@ -14,13 +14,6 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 
-<script>
-    function changeWarehouse() {
-        const selectedWarehouse = document.getElementById('location').value;
-        window.location.href = `/voorraad?warehouseId=${selectedWarehouse}`;
-    }
-</script>
-
     <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
@@ -91,16 +84,24 @@
           }
         }
       
+
         function changeWarehouse() {
-          const warehouseId = document.getElementById('location').value;
-          fetchAndRenderVoorraadOmzetChart(warehouseId);
-        }
+    const warehouseId = document.getElementById('location').value;
+    window.location.href = `/voorraad?warehouseId=${warehouseId}`; // 刷新页面并传递仓库ID
+}
+
       
-        fetchAndRenderVoorraadOmzetChart(0);  // Initial fetch for the default warehouse ID
+        fetchAndRenderVoorraadOmzetChart(1);  // Initial fetch for the default warehouse ID
       </script>
     
 <section class="menu">
     <h1><%= stats.location %></h1>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const warehouseId = <%= warehouseId %>;
+    fetchAndRenderVoorraadOmzetChart(warehouseId);
+  });
+</script>
     <section class="dropdowns">
         <select name="location" id="location" onchange="changeWarehouse()" <% if (user.role === 'TeamLeader') { %> style="display: none;" <% } %>>
             <% for (let w of warehouses) { %>
@@ -135,6 +136,7 @@
 
                 window.location.href = `/voorraad?warehouseId=${selectedWarehouse}&startDate=${startDate}&endDate=${endDate}`;
             }
+            
         </script>
     </section>
 </section>
