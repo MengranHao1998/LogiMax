@@ -1,7 +1,7 @@
 import express from "express";
-import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue, EmployeePerformanceMetrics } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber } from "./db-warehouse";
+import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber, getOrdersByEmployee, getAmountOfOrdersByEmployee } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -309,11 +309,35 @@ app.get('/processes',secureMiddleware, async (req, res) => {
         const currentDate = new Date(lastDate);
         currentDate.setDate(lastDate.getDate() - i); // Subtract days
         const formattedDate = currentDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+        // Format as DD-MM-YYYY
+        const formattedDateDMY = String(currentDate.getDate()).padStart(2, '0') + '-' + String(currentDate.getMonth() + 1).padStart(2, '0') + '-' + currentDate.getFullYear();
+        const inc = Math.floor(await countIncomingShipments(formattedDateDMY, formattedDateDMY, warehouseId));
+        const out = await countOutgoingShipments_Optimized(formattedDateDMY, formattedDateDMY, warehouseId);
         shipmentData.push(
-            { Type: "Aangekomen", Shipments: incomingShipments, Date: formattedDate },
-            { Type: "Verzendingen", Shipments: outgoingShipments, Date: formattedDate }
+            { Type: "Aangekomen", Shipments: inc, Date: formattedDate },
+            { Type: "Verzendingen", Shipments: out, Date: formattedDate }
         );
     }
+
+  // WERKNEMERSPRESTATIES LOGIC
+  let employeePerformanceData: EmployeePerformanceMetrics[]  = [];
+  
+  for (let e of warehouses[warehouseId - 1].employees) {
+    const ordersByEmployee: Order[] = await getOrdersByEmployee(startDate, endDate, e.employee_id);
+    let amountOfPickedProducts: number = 0;
+    if (e.department === "warehouse_employee") {
+      let sum = ordersByEmployee.forEach(order => order.products.forEach(product => amountOfPickedProducts += product.quantity));
+      const eData: EmployeePerformanceMetrics = {
+        employeeId: e.employee_id,
+        employeeName: e.firstName + " " + e.lastName,    
+        completedOrders: ordersByEmployee,
+        amountOfCompletedOrders: await getAmountOfOrdersByEmployee(startDate, endDate, e.employee_id), 
+        amountOfPickedProducts: amountOfPickedProducts
+      };
+  
+      employeePerformanceData.push(eData);
+    }    
+  }
 
   res.render('processes', {
     activePage: 'processes',

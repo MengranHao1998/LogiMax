@@ -19,6 +19,7 @@ export interface EmployeePerformanceMetrics {
     employeeName: string;
     amountOfCompletedOrders: number;
     completedOrders: Order[];
+    amountOfPickedProducts: number;
     /*employeePerformanceLevel: "high" | "mid" | "low"*/
 }
 

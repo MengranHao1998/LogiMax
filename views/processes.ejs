@@ -129,7 +129,7 @@
 <article>
     <h2>Werknemersprestaties</h2>
     <section class="secondrow">
-        <div id="grid-js-table"></div>
+        <div id="grid-js-table-employees"></div>
         <!--<canvas id="werknemerPrestaties" width="200px" height="200px"></canvas>
         <div style="text-align: center; margin-top: 20px;">
             <button id="sortById">Sorteer op ID</button>
@@ -146,15 +146,17 @@
   const gridData = employeesPerformance.map(employee => [
     employee.employeeId,
     employee.employeeName,
-    employee.amountOfCompletedOrders
+    employee.amountOfCompletedOrders,
+    employee.amountOfPickedProducts
   ]);
 
   // Initialize Grid.js
   new gridjs.Grid({
     columns: [
-      "ID werknemer",
+      {name: "ID werknemer", width: "200px"},
       "Naam werknemer",
-      "Aantal voltooide bestellingen"
+      {name: "Aantal voltooide bestellingen", width: "250px"},
+      {name: "Aantal verzamelde producten", width: "250px"}
     ],
     data: gridData,
     pagination: {
@@ -163,7 +165,7 @@
     },
     sort: true,
     search: true,
-    width: '80%',
+    width: '70%',
     style: {
       th: {
         'background-color': '#0469C8',
@@ -186,7 +188,7 @@
     className: {
       table: 'grid-js-table'
     }
-      }).render(document.getElementById("grid-js-table"));
+      }).render(document.getElementById("grid-js-table-employees"));
 </script>
 
 <%- include("partials/doc-end")%>
