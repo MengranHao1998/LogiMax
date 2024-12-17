@@ -267,22 +267,17 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   const outgoingShipments = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
   const shipmentsOnTheWay: number = Math.floor(outgoingShipments * getRandomNumber(0.5, 0.8));
 
-  const shipmentData = [
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-01"},
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-02"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-02"},
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-03"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-03"},
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-04"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-04"},
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-05"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-05"},
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-06"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-06"},
-    {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-07"},
-    {"Type": "Verzendingen", "Shipments": outgoingShipments, "Date": "2023-12-07"}
-] 
+  const lastDate = new Date(endDate.split("-").reverse().join("-")); // Parse endDate
+    const shipmentData = [];
+    for (let i = 6; i >= 0; i--) {
+        const currentDate = new Date(lastDate);
+        currentDate.setDate(lastDate.getDate() - i); // Subtract days
+        const formattedDate = currentDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+        shipmentData.push(
+            { Type: "Aangekomen", Shipments: incomingShipments, Date: formattedDate },
+            { Type: "Verzendingen", Shipments: outgoingShipments, Date: formattedDate }
+        );
+    }
 
   res.render('processes', {
     activePage: 'processes',

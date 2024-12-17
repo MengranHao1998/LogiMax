@@ -87,8 +87,8 @@
                 "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
                 "data": {
                     "values": [
-                        <% chartData.forEach((item, index) => { %>
-                            { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < chartData.length - 1 ? ',' : '' %>
+                        <% shipmentData.forEach((item, index) => { %>
+                            { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < shipmentData.length - 1 ? ',' : '' %>
                         <% }); %>
                     ]
                 },
