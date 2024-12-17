@@ -48,6 +48,8 @@ export interface ProductTableInformation {
     totalUnitsSold: number;
     totalRevenue: number;
     currency: string;
+    currentStock: number;
+    currentStockLevel: string;
 }
 
 // Interfaces /shipments

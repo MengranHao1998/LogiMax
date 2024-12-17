@@ -91,20 +91,14 @@ export async function getShipments(startDate: string, endDate: string, warehouse
 }
 
 export async function countIncomingShipments(startDate: string, endDate: string, warehouseId: number) {
-    const allShipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
-    let sumOfShipments: number = 0;
-
-    if (!allShipments) {
-        return sumOfShipments; // Return 0 if there are no orders
-    }
-
-    for (let shipment of allShipments) {
-        if (shipment.warehouse_id === warehouseId && shipment.type === "incoming") {
-            sumOfShipments++;
-        }
-    }
+    const outgoingShipments: number = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
+    const simulatedIncomingShipments: number = outgoingShipments * getRandomNumber(0.8, 1.5);
     
-    return sumOfShipments;
+    return simulatedIncomingShipments;
+}
+
+export function getRandomNumber(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
 }
 
 export async function countOutgoingShipments(startDate: string, endDate: string, warehouseId: number) {
@@ -136,7 +130,7 @@ export async function countOutgoingShipments_Optimized(startDate: string, endDat
     });
 }
 
-export async function fetchWarehouses() {
+/*export async function fetchWarehouses() {
     const response = await fetch("https://logimax-api.onrender.com/warehouses/", {
         method: "GET",
         headers: {
@@ -144,6 +138,12 @@ export async function fetchWarehouses() {
           "authorization": "logimax-admin"
         }
     });
+    const data = await response.json();
+    return data;
+}*/
+
+export async function fetchWarehouses() {
+    const response = await fetch("https://raw.githubusercontent.com/MengranHao1998/LogiMax/refs/heads/main/warehouses.json");
     const data = await response.json();
     return data;
 }

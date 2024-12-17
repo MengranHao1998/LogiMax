@@ -1,7 +1,7 @@
 import express from "express";
 import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation,WarehouseProductStockValue } from "./types";
 import { MongoClient, Collection } from "mongodb";
-import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, } from "./db-warehouse";
+import { countOrders_Optimized, fetchWarehouses, countDelayedOrders_Optimized, getOrders, getShipments, countIncomingShipments, countOutgoingShipments_Optimized, getRandomNumber } from "./db-warehouse";
 import dotenv from "dotenv";
 import {secureMiddleware} from './middleware/authMiddleware'
 import jwt from "jsonwebtoken";
@@ -153,6 +153,7 @@ app.get('/home', secureMiddleware, async (req, res) => {
   let productSalesData: ProductTableInformation[] = [];
   
   for (let product of allSoldProducts) {
+    const productId = product.id;
     const productForTable: ProductTableInformation = {
       id: product.id,
       title: product.title,
@@ -161,9 +162,14 @@ app.get('/home', secureMiddleware, async (req, res) => {
       price: product.price.actualPrice === null ? product.price.discountPrice : product.price.actualPrice,
       totalUnitsSold: product.quantity,
       totalRevenue: Math.round(product.price.discountPrice * product.quantity),
-      currency: product.price.currency
+      currency: product.price.currency,
+      currentStock: warehouses[warehouseId - 1].products.find((x) => x.id === productId)?.quantity || 0/*Math.round(getRandomNumber(10, 200))*/,
+      get currentStockLevel() {
+        if (this.currentStock < 60) return "low";
+        if (this.currentStock < 120) return "medium";
+        return "high";
+      }
     };
-  
     productSalesData.push(productForTable);
   }
 
@@ -207,14 +213,14 @@ app.get('/voorraad', secureMiddleware, async(req, res) => {
   //LOGIC TURNOVER RATE
   const totalInventoryValue = (warehouseId: number) => {
     let totalValue: number = 0;
-    const chosenWarehouseProducts: Product[] = warehouses[warehouseId].products;
+    const chosenWarehouseProducts: Product[] = warehouses[warehouseId - 1].products;
 
     for (let p of chosenWarehouseProducts) {
       let price: number = p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice;
       let subtotal: number = price * p.quantity;
       totalValue += subtotal;
     }
-    return totalValue;
+    return Math.floor(totalValue);
   }
   // LOGIC STAT CARDS
   const delayedOrders = await countDelayedOrders_Optimized(startDate, endDate ,warehouseId);
@@ -257,8 +263,9 @@ app.get('/processes',secureMiddleware, async (req, res) => {
   const location = warehouses[warehouseId - 1].location;
 
   const shipments: Shipment[] = await getShipments(startDate, endDate, warehouseId);
-  const incomingShipments = await countIncomingShipments(startDate, endDate, warehouseId);
+  const incomingShipments = Math.floor(await countIncomingShipments(startDate, endDate, warehouseId));
   const outgoingShipments = await countOutgoingShipments_Optimized(startDate, endDate, warehouseId);
+  const shipmentsOnTheWay: number = Math.floor(outgoingShipments * getRandomNumber(0.5, 0.8));
 
   const shipmentData = [
     {"Type": "Aangekomen", "Shipments": incomingShipments, "Date": "2023-12-01"},
@@ -289,6 +296,7 @@ app.get('/processes',secureMiddleware, async (req, res) => {
       shipments,
       incomingShipments,
       outgoingShipments,
+      shipmentsOnTheWay,
       location
     }
   }); 

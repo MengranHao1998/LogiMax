@@ -71,7 +71,7 @@
         </div>
         <div class="statcard">
             <i></i>
-            <h2>300</h2>
+            <h2><%= stats.shipmentsOnTheWay %></h2>
             <p>Onderweg</p>
         </div>
     </section>
@@ -87,8 +87,8 @@
                 "description": "Grouped bar chart showing incoming and outgoing shipments for 7 days.",
                 "data": {
                     "values": [
-                        <% shipmentData.forEach((item, index) => { %>
-                            { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < shipmentData.length - 1 ? ',' : '' %>
+                        <% chartData.forEach((item, index) => { %>
+                            { "Type": "<%= item.Type %>", "Shipments": <%= item.Shipments %>, "Date": "<%= item.Date %>" }<%= index < chartData.length - 1 ? ',' : '' %>
                         <% }); %>
                     ]
                 },
