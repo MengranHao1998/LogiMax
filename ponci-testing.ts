@@ -1,7 +1,7 @@
   
-import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation, WarehouseProductStockValue } from "./types";
+import { Employee, Order, Shipment, Warehouse, Product, ProductTableInformation, WarehouseProductStockValue, EmployeePerformanceMetrics } from "./types";
 import { countOrders, fetchWarehouses, countDelayedOrders, getOrders, getShipments, countIncomingShipments, countOutgoingShipments,
-  countOutgoingShipments_Optimized, countDelayedOrders_Optimized, countOrders_Optimized } from "./db-warehouse";
+  countOutgoingShipments_Optimized, countDelayedOrders_Optimized, countOrders_Optimized, getOrdersByEmployee, getAmountOfOrdersByEmployee } from "./db-warehouse";
 
 async function main() {
   let startDate: string = "01-12-2024";
@@ -126,7 +126,7 @@ function getProductsFromSales(allOrders: Order[]): Product[] {
 const allSoldProducts = getProductsFromSales(allOrders);
 let productSalesData: ProductTableInformation[] = [];
 
-for (let product of allSoldProducts) {
+/*for (let product of allSoldProducts) {
   const productForTable: ProductTableInformation = {
     id: product.id,
     title: product.title,
@@ -139,7 +139,7 @@ for (let product of allSoldProducts) {
   };
 
   productSalesData.push(productForTable);
-}
+}*/
 
 //console.log(allSoldProducts);
 console.log("----------------------------------------------------------");
@@ -213,9 +213,41 @@ console.log("----------------------------------------------------------");
 
   // Tests OPTIMIZING
 
-  console.log(await countOutgoingShipments_Optimized(startDate, endDate, 4));
+  /*console.log(await countOutgoingShipments_Optimized(startDate, endDate, 4));
   console.log(await countDelayedOrders_Optimized(startDate, endDate, 4));
-  console.log(await countOrders_Optimized(startDate, endDate, 4));
+  console.log(await countOrders_Optimized(startDate, endDate, 4));*/
+
+  let totalStockQuantity: number = 0;
+  warehouses[warehouseId - 1].products.forEach((x) => totalStockQuantity += x.quantity);
+  const warehouseUtilization: number = totalStockQuantity / warehouses[warehouseId - 1].warehouse_capacity;
+  console.log(totalStockQuantity);
+  console.log(warehouses[warehouseId - 1].warehouse_capacity);
+  console.log(warehouseUtilization);
+
+
+  let employeePerformanceData: EmployeePerformanceMetrics[]  = [];
+
+  for (let e of warehouses[warehouseId - 1].employees) {
+    if (e.department === "warehouse_employee") {
+      const eData: EmployeePerformanceMetrics = {
+        employeeId: e.employee_id,
+        employeeName: e.firstName + " " + e.lastName,    
+        completedOrders: await getOrdersByEmployee(e.employee_id),
+        amountOfCompletedOrders: await getAmountOfOrdersByEmployee(e.employee_id)
+      };
+  
+      employeePerformanceData.push(eData);
+    }    
+  }
+
+  for (let i of employeePerformanceData) {
+    console.log("\n------------------------------------------------------");
+    console.log(i.employeeId);
+    console.log(i.employeeName);
+    console.log("Amount of orders completed: " + i.amountOfCompletedOrders);
+    console.log("------------------------------------------------------\n");
+  }
+  console.log("Employees: " + employeePerformanceData.length);
 }
 
 

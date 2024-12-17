@@ -78,6 +78,14 @@ export async function countDelayedOrders_Optimized(startDate: string, endDate: s
     });
 }
 
+export async function getOrdersByEmployee(id: string) {
+    return await ordersCollection.find({employee_id: id}).toArray();
+}
+
+export async function getAmountOfOrdersByEmployee(id: string) {
+    return ordersCollection.countDocuments({employee_id: id});
+}
+
 //SHIPMENTS
 export async function getShipments(startDate: string, endDate: string, warehouseId: number) {
     console.log(`Fetching shipments between: ${startDate} and ${endDate} for warehouse ${warehouseId}`);

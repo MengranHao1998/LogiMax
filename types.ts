@@ -9,10 +9,18 @@ export interface Employee {
     birthDate: string; 
   }
 
-  type Department = // Union type var, department is 1 van deze 3 mogelijkheden
-    | "warehouse_manager"
-    | "hr_manager"
-    | "warehouse_employee";
+type Department = // Union type var, department is 1 van deze 3 mogelijkheden
+| "warehouse_manager"
+| "hr_manager"
+| "warehouse_employee";
+
+export interface EmployeePerformanceMetrics {
+    employeeId: string;
+    employeeName: string;
+    amountOfCompletedOrders: number;
+    completedOrders: Order[];
+    /*employeePerformanceLevel: "high" | "mid" | "low"*/
+}
 
 // Interfaces /orders
 export interface Order {
