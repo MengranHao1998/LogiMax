@@ -1,3 +1,9 @@
+.menu h1:first-of-type {
+    font-size: 3rem;
+    color: var(--logimax-blue);
+}
+
+
 .main .menu {
     font-size: x-large;
     display: flex;
@@ -26,8 +32,8 @@
 }
 
 .main article h2 {
-    text-align: center;
-    margin-bottom: 1rem;
+    font-size: 2rem;
+    margin: 4rem 0 2rem 0;
 }
 
 .main section {
@@ -47,7 +53,7 @@
 /* STATCARDS */
 .statcard {
     font-size: larger;
-    padding: 2rem 1rem 2rem 1rem;
+    padding: 3rem 1rem 2rem 1rem;
     width: 12rem;
     text-align: center;
     word-wrap: break-word;
@@ -57,14 +63,24 @@
     background-color: #fff;
 }
 
+.statcard i {
+    width: 100px;
+}
+
+.statcard h2:first-of-type {
+    font-size: 2.5rem;
+    color: var(--logimax-blue);
+    margin: 1rem 0;
+}
+
 .voorraad-page .firstrow .statcard { /*ENKL VOOR STATCARDS IN VOORAAD.EJS PAGINA ANDERS CSS PROBLEEM MET RUIMTE GEBRUIK CHART*/
     width: 17rem; /* Set custom width for the statcard */
 }
 
 .firstrow .statcard:nth-child(1) i,.firstrow .statcard:nth-child(2) i {
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background-image: url("/images/orders-icon.png"); /* Use the same icon */
     background-size: cover;
     background-position: center; 
@@ -72,8 +88,8 @@
 
 .firstrow .statcard i {
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background-image: url("/images/voorraad-icon.png");
     background-size: cover;
     background-position: center;
@@ -81,8 +97,8 @@
 
 .secondrow i{
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background-image: url("/images/turnover-icon.png");
     background-size: cover;
     background-position: center;
@@ -90,8 +106,8 @@
 
 .thirdrow i{
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     background-image: url("/images/low-chart-icon.png");
     background-size: cover;
     background-position: center;
@@ -115,6 +131,12 @@
     text-align: center;
     box-shadow: 1px 3px #acb1b6;
     background-color: #fff;
+}
+
+/*VEGA LITE*/
+
+#Ruimtegebruik {
+    padding: 0;
 }
 
 

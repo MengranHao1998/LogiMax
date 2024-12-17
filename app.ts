@@ -353,7 +353,8 @@ app.get('/processes',secureMiddleware, async (req, res) => {
       outgoingShipments,
       shipmentsOnTheWay,
       location
-    }
+    },
+    employeePerformanceData
   }); 
 });
 
