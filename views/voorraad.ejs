@@ -1,95 +1,107 @@
 <body class="voorraad-page">
-<%- include("partials/header-nav")%>
-
-<!-- Vega-Lite and Vega Embed Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/vega@5.21.0"></script> <!-- Vega (Core library) -->
-<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.0"></script> <!-- Vega-Lite (Visualization library) -->
-<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.21.0"></script> <!-- Vega Embed library for embedding charts -->
-
-<script>
-    console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
-</script>
-
-<!-- JS CALENDAR SCRIPT -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
-
-    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+    <%- include("partials/header-nav")%>
+    
+    <!-- Vega-Lite and Vega Embed Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.21.0"></script> <!-- Vega (Core library) -->
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.0"></script> <!-- Vega-Lite (Visualization library) -->
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.21.0"></script> <!-- Vega Embed library for embedding charts -->
+    
     <script>
-        async function fetchAndRenderVoorraadOmzetChart(warehouseId) {
-          try {
-            const response = await fetch(`/api/products-stock-value?warehouseId=${warehouseId}`);
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-      
-            const data= await response.json();
-            console.log(`Fetched data for warehouse ${warehouseId}:`, data);
-      
-            if (!data.length) {
-              console.error("No data available for chart.");
-              return;
-            }
-      
-            // Sort data by quantity and mark the top 5
-            data.sort((a, b) => b.quantity - a.quantity);
-    const top5Data = data.slice(0, 5); // Hoogste 5 producten
-    const bottom5Data = data.slice(-5).sort((a, b) => a.quantity - b.quantity); // Laagste 5 producten
-
-    // Configuratie voor de Top 5 grafiek
-    vegaEmbed("#top5VoorraadOmzet", {
-      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "width": "container",
-      "description": `Top 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
-      "data": { "values": top5Data },
-      "mark": "bar",
-      "encoding": {
-        "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name","titleFontSize": 16 } },
-        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value","titleFontSize": 16, "titlePadding": 30} },
-        "color": {
-          "value": "blue", // Blauwe kleur voor de Top 5
-        },
-        "tooltip": [
-          { "field": "title", "type": "ordinal", "title": "Product Name" },
-          { "field": "quantity", "type": "quantitative", "title": "Quantity" }
-        ]
-      }
-    });
-
-    // Configuratie voor de Bottom 5 grafiek
-    vegaEmbed("#bottom5VoorraadOmzet", {
-      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "description": `Bottom 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
-      "data": { "values": bottom5Data },
-      "mark": "bar",
-      "encoding": {
-        "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name","titleFontSize": 16 } },
-        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value","titleFontSize": 16,"titlePadding": 30 } },
-        "color": {
-          "value": "red" // Rode kleur voor de Bottom 5
-        },
-        "tooltip": [
-          { "field": "title", "type": "ordinal", "title": "Product Name" },
-          { "field": "quantity", "type": "quantitative", "title": "Quantity" }
-        ]
-      }
-    });
-          } catch (error) {
-            console.error("Error fetchring voorraad omzet data:", error);
+        console.log('Stylesheet:', document.querySelector('link[rel="stylesheet"]').href);
+    </script>
+    
+    <!-- JS CALENDAR SCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+    
+        <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+        <script>
+            async function fetchAndRenderVoorraadOmzetChart(warehouseId) {
+              try {
+                const response = await fetch(`/api/products-stock-value?warehouseId=${warehouseId}`);
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+          
+                const data= await response.json();
+                console.log(`Fetched data for warehouse ${warehouseId}:`, data);
+          
+                if (!data.length) {
+                  console.error("No data available for chart.");
+                  return;
+                }
+          
+                // Sort data by quantity and mark the top 5
+                data.sort((a, b) => b.quantity - a.quantity);
+        const top5Data = data.slice(0, 5); // Hoogste 5 producten
+        const bottom5Data = data.slice(-5).sort((a, b) => a.quantity - b.quantity); // Laagste 5 producten
+    
+        // Configuratie voor de Top 5 grafiek
+        vegaEmbed("#top5VoorraadOmzet", {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": "container",
+          "title": {
+            "text": "Top 5 Voorraad Omzet",
+            "fontSize": 20,
+            "fontWeight": "bold",
+            "anchor": "middle"
+            },
+          "description": `Top 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
+          "data": { "values": top5Data },
+          "mark": "bar",
+          "encoding": {
+            "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name","titleFontSize": 16 } },
+            "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value","titleFontSize": 16, "titlePadding": 30} },
+            "color": {
+              "value": "blue", // Blauwe kleur voor de Top 5
+            },
+            "tooltip": [
+              { "field": "title", "type": "ordinal", "title": "Product Name" },
+              { "field": "quantity", "type": "quantitative", "title": "Quantity" }
+            ]
           }
-        }
-      
-
-        function changeWarehouse() {
-    const warehouseId = document.getElementById('location').value;
-    window.location.href = `/voorraad?warehouseId=${warehouseId}`;
-}
-
-      
-        fetchAndRenderVoorraadOmzetChart(1);  // Initial fetch for the default warehouse ID
-      </script>
+        });
+    
+        // Configuratie voor de Bottom 5 grafiek
+        vegaEmbed("#bottom5VoorraadOmzet", {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "title": {
+            "text": "Bottom 5 Voorraad Omzet",
+            "fontSize": 20,
+            "fontWeight": "bold",
+            "anchor": "middle"
+            },      "width": "container",
+          "description": `Bottom 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
+          "data": { "values": bottom5Data },
+          "mark": "bar",
+          "encoding": {
+            "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name","titleFontSize": 16 } },
+            "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value","titleFontSize": 16,"titlePadding": 30 } },
+            "color": {
+              "value": "red" // Rode kleur voor de Bottom 5
+            },
+            "tooltip": [
+              { "field": "title", "type": "ordinal", "title": "Product Name" },
+              { "field": "quantity", "type": "quantitative", "title": "Quantity" }
+            ]
+          }
+        });
+              } catch (error) {
+                console.error("Error fetchring voorraad omzet data:", error);
+              }
+            }
+          
+    
+            function changeWarehouse() {
+        const warehouseId = document.getElementById('location').value;
+        window.location.href = `/voorraad?warehouseId=${warehouseId}`;
+    }
+    
+          
+            fetchAndRenderVoorraadOmzetChart(1);  // Initial fetch for the default warehouse ID
+          </script>
     
 <section class="menu">
     <h1><%= stats.location %></h1>
