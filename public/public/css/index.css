@@ -1,3 +1,23 @@
+#resetButton:hover, #filter:hover {
+    background-color: #3de0c6; /* Verander de achtergrondkleur naar #3de0c6 wanneer er over de knop wordt gehooverd */
+}
+
+#filter {
+    padding: 8px 16px; /* Kleinere padding voor een normalere knopgrootte */
+    border-radius: 5px; /* Iets kleinere radius voor de knop */
+    background-color: #0469C8; /* Blauwe achtergrondkleur */
+    color: white; /* Witte tekstkleur */
+    border: none; /* Geen rand */
+    font-size: 14px; /* Normale tekstgrootte */
+    cursor: pointer; /* Cursor verandert in pointer bij hover */
+    display: inline-block; /* Zorg ervoor dat de knop de normale breedte heeft */
+    max-width: 200px; /* Zet een maximale breedte voor de knop */
+    margin-left: auto; /* Centreer de knop horizontaal */
+    margin-right: auto; /* Centreer de knop horizontaal */
+    text-align: center; /* Zorg dat de tekst in het midden van de knop staat */
+    height: 40px; /* Stel de hoogte van de knop in */
+}
+
 .menu h1:first-of-type {
     font-size: 3rem;
     color: var(--logimax-blue);
@@ -102,6 +122,28 @@
     background-image: url("/images/turnover-icon.png");
     background-size: cover;
     background-position: center;
+}
+
+/* Styling voor de resetknop */
+#resetButton {
+    padding: 8px 16px; /* Kleinere padding voor een normalere knopgrootte */
+    border-radius: 5px; /* Iets kleinere radius voor de knop */
+    background-color: #0469C8; /* Blauwe achtergrondkleur */
+    color: white; /* Witte tekstkleur */
+    border: none; /* Geen rand */
+    font-size: 14px; /* Normale tekstgrootte */
+    cursor: pointer; /* Cursor verandert in pointer bij hover */
+    display: inline-block; /* Zorg ervoor dat de knop de normale breedte heeft */
+    max-width: 200px; /* Zet een maximale breedte voor de knop */
+    margin-left: auto; /* Centreer de knop horizontaal */
+    margin-right: auto; /* Centreer de knop horizontaal */
+    text-align: center; /* Zorg dat de tekst in het midden van de knop staat */
+    height: 80px; /* Stel de hoogte van de knop in */
+}
+
+#resetButton:hover {
+    background-color: #3de0c6; /* Verander de achtergrondkleur naar #3de0c6 wanneer er over de knop wordt gehooverd */
+    transition: background-color 0.3s ease; /* Zorg voor een soepele overgang van kleur */
 }
 
 .thirdrow i{

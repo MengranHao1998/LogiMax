@@ -27,7 +27,7 @@
             <option value="Los Angeles">Los Angeles</option>-->
         </select>
         <input type="text" id="date_range" placeholder="Selecteer Datumbereik" />
-        <button onclick="filterData()">Filter</button>
+        <button id="filter" onclick="filterData()">Filter</button>
         <script>
             flatpickr("#date_range", {
                 mode: "range",
@@ -85,9 +85,7 @@
     <h2>Voorraad Omzet</h2>
     <section class="secondrow">
       <div class="placeholder" id="voorraadOmzet"></div>
-      <button id="resetButton" style="margin-top: 10px; padding: 10px 20px; border-radius: 25px; background-color: #3E3DE0; color: white; border: none; font-size: 14px; cursor: pointer;">
-        Reset Grafiek
-      </button>
+      <button id="resetButton">Reset Grafiek</button>
       <script type="text/javascript">
         // Dynamische data van de server
         const graphData = <%- JSON.stringify(graphData) %>;
@@ -145,7 +143,7 @@
                 "type": "nominal",
                 "scale": {
                   "domain": ["Voorraadwaarde", "Verkochte Waarde"],
-                  "range": ["#3E3DE0", "#3de0c6"]  // Blauwe en groene kleuren
+                  "range": ["#0469C8", "#3de0c6"]  // Blauwe en groene kleuren
                 },
                 "title": "Type"
               },
