@@ -13,78 +13,7 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-  <script>
-    async function fetchProductsStockValue(warehouseId) {
-      try {
-        // Ophalen van de gegevens van de API
-        const response = await fetch(`/api/products-stock-value?warehouseId=${warehouseId}`);
-        const data = await response.json();
-    
-        console.log("Data passed to Vega-Lite:", data);
-    
-        // Controleer of de data leeg is en gebruik standaardgegevens als dat het geval is
-        const chartData = (data.length ? data : [
-          { title: "Product A", quantity: 100, price: 10, soldQuantity: 50 },
-          { title: "Product B", quantity: 200, price: 15, soldQuantity: 150 },
-          { title: "Product C", quantity: 300, price: 20, soldQuantity: 200 },
-          { title: "Product D", quantity: 400, price: 25, soldQuantity: 300 },
-          { title: "Product E", quantity: 500, price: 30, soldQuantity: 400 }
-        ]).flatMap(item => [
-          {
-            product: item.title,
-            type: "Voorraadwaarde",
-            value: item.quantity * item.price, // Voorraadwaarde in EURO
-          },
-          {
-            product: item.title,
-            type: "Verkochte Waarde",
-            value: item.soldQuantity * item.price, // Verkochte waarde in EURO
-          }
-        ]);
-    
-        // Render de geneste staafgrafiek
-        vegaEmbed("#voorraadOmzet", {
-          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-          "description": "Voorraad en Verkochte Waarde per Product",
-          "width": "container", // Containerbreedte
-          "height": 400, // Hoogte van de grafiek
-          "data": { "values": chartData },
-          "mark": "bar",
-          "encoding": {
-            "x": {
-              "field": "product",
-              "type": "ordinal",
-              "axis": { "title": "Product", "labelAngle": 45 } // Productnamen roteren
-            },
-            "y": {
-              "field": "value",
-              "type": "quantitative",
-              "axis": { "title": "Waarde (€)" } // Waarden in EURO
-            },
-            "color": {
-              "field": "type",
-              "type": "nominal",
-              "legend": { "title": "Type Waarde" } // Kleuren voor verschillende waardetypes
-            },
-            "tooltip": [
-              { "field": "product", "type": "nominal", "title": "Product" },
-              { "field": "type", "type": "nominal", "title": "Type Waarde" },
-              { "field": "value", "type": "quantitative", "title": "Waarde (€)" }
-            ]
-          }
-        });
-      } catch (error) {
-        console.error("Error fetching or rendering data:", error);
-      }
-    }
-    
-    // Initieel de grafiek laden voor een bepaald warehouseId (bijv. 0)
-    fetchProductsStockValue(0);
-    </script>
-    
-    
-    
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>   
 <section class="menu">
   <h1><%= stats.location %></h1>
   <section class="dropdowns">
@@ -155,7 +84,69 @@
 <article>
     <h2>Voorraad Omzet</h2>
     <section class="secondrow">
-        <div class="placeholder" id="voorraadOmzet"></div>
+      <div class="placeholder" id="voorraadOmzet"></div>
+      <script type="text/javascript">
+        // De graphData wordt dynamisch van de server naar de client gestuurd
+        const graphData = <%- JSON.stringify(graphData) %>; // Injecteer server-side data in de client-side
+        
+        // Vega-Lite configuratie voor de grafiek
+        const vegaSpec = {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": "container",  // Pas de breedte aan
+          "height": 400, // Pas de hoogte aan
+          "data": {
+            "values": graphData
+          },
+          "mark": "bar",
+          "encoding": {
+            "x": {
+              "field": "product",  // X-as is gebaseerd op het product
+              "type": "nominal",
+              "axis": { 
+                "title": "Product",
+                "labelAngle": 45  // Rotatie van de x-as labels
+              }
+            },
+            "y": {
+              "field": "value",  // Y-as is gebaseerd op de waarde
+              "type": "quantitative",
+              "title": "Waarde in €"
+            },
+            "color": {
+              "field": "type",  // Kleur op basis van het type (Voorraadwaarde of Verkochte Waarde)
+              "type": "nominal",
+              "scale": {
+                "domain": ["Voorraadwaarde", "Verkochte Waarde"],
+                "range": ["#3E3DE0", "#3de0c6"]  // Blauwe en groene kleuren
+              },
+              "title": "Type"
+            },
+            "tooltip": [
+              { "field": "product", "type": "nominal", "title": "Product" },
+              { "field": "type", "type": "nominal", "title": "Type" },
+              { "field": "value", "type": "quantitative", "title": "Waarde in €" }
+            ]
+          },
+          "config": {
+            "view": {
+              "stroke": null
+            },
+            "legend": {
+              "orient": "bottom",  // Zet de legenda onderaan de grafiek
+              "title": "Type",
+              "symbolSize": 150,  // Pas de grootte van de symbolen in de legenda aan
+              "labelFontSize": 12,  // Pas de lettergrootte van de labels aan
+              "labelPadding": 10  // Pas de ruimte tussen de labels aan
+            }
+          }
+        };
+      
+        // Render de grafiek met Vega-Lite
+        vegaEmbed('#voorraadOmzet', vegaSpec);
+      </script>
+      
+        
+        
         <div class="statcard">
           <i></i>
           <h2><%= stats.turnoverRate %></h2>

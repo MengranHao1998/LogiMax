@@ -201,22 +201,31 @@ app.get('/home', secureMiddleware, async (req, res) => {
 
   productSalesData.sort((a, b) => b.totalRevenue - a.totalRevenue);
   // ---------------------------------------------------------------ray testen voorraadomzet index.ejs
-  // Verzamelen van gegevens voor de top producten (top 7 op basis van voorraadomzet)
-  const graphData = warehouses[warehouseId - 1].products.map(product => {
-    const inventoryValue = totalInventoryValue(warehouseId); // Totale voorraadwaarde
-    const salesValue = totalSalesValue(warehouseId); // Totale verkochte waarde
-    const turnoverRate = salesValue !== 0 ? inventoryValue / salesValue : 0; // Voorkom deling door nul
+  const topProducts = warehouses[warehouseId - 1].products
+  .map(product => {
+    const price = product.price.actualPrice || product.price.discountPrice; // Gebruik de correcte prijs
+    const inventoryValue = product.quantity * price; // Totale voorraadwaarde
+    const soldProduct = allSoldProducts.find(p => p.id === product.id);
+    const soldQuantity = soldProduct ? soldProduct.quantity : 0; // Verkochte eenheden
+    const salesValue = soldQuantity * price; // Totale verkochte waarde
 
     return {
       productId: product.id,
       productTitle: product.title,
       inventoryValue,
       salesValue,
-      turnoverRate
     };
-  });
-// Sorteer de producten op voorraadomzet (turnoverRate) en beperk tot top 7
-const topProducts = graphData.sort((a, b) => b.turnoverRate - a.turnoverRate).slice(0, 7);
+  })
+  .sort((a, b) => b.inventoryValue - a.inventoryValue) // Sorteer op voorraadwaarde (of ander criterium)
+  .slice(0, 7); // Beperk tot de top 7 producten
+
+// Hier worden de graphData gegenereerd:
+const graphData = topProducts
+  .map(product => [
+    { product: product.productTitle, type: "Voorraadwaarde", value: product.inventoryValue },
+    { product: product.productTitle, type: "Verkochte Waarde", value: product.salesValue }
+  ])
+  .flat(); // Maak een platte lijst van alle gegevens
 
   //-----------------------------------------------------------------------------------------------------
   res.render('index', {
@@ -236,7 +245,7 @@ const topProducts = graphData.sort((a, b) => b.turnoverRate - a.turnoverRate).sl
       warehouseUtilization: warehouseUtilizationPercentage, // Add warehouse utilization here
     },
     productSalesData,
-    graphData: topProducts // Doorsturen van de top 7 producten voor de grafiek
+    graphData: graphData
   }); // activePage => voor gebruik nav item
 });
 
