@@ -106,6 +106,22 @@ app.get('/home', secureMiddleware, async (req, res) => {
     return totalValue;
   }
 
+  // Totale waarde van alle verkochte producten in orders
+  const totalSalesValue = (warehouseId: number) => {
+    let totalValue: number = 0;
+    for (let o of orders) {
+      const productsInOrders: Product[] = o.products;
+      for (let p of productsInOrders) {
+        if (o.warehouse_id === warehouseId) {
+          let price: number = p.price.actualPrice === null ? p.price.discountPrice : p.price.actualPrice;
+          let subtotal: number = price * p.quantity;
+          totalValue += subtotal;
+        }
+      }
+    }
+    return totalValue;
+  }
+
   //Totale waarde van alle items in orders
   const totalOrdersValue = (warehouseId: number) => {
     let totalValue: number = 0;
@@ -121,7 +137,6 @@ app.get('/home', secureMiddleware, async (req, res) => {
     }
     return totalValue;
   }
-  
   
   const ordersValue: number = totalOrdersValue(warehouseId);
   const inventoryValue: number = totalInventoryValue(warehouseId);
@@ -185,7 +200,25 @@ app.get('/home', secureMiddleware, async (req, res) => {
   }
 
   productSalesData.sort((a, b) => b.totalRevenue - a.totalRevenue);
+  // ---------------------------------------------------------------ray testen voorraadomzet index.ejs
+  // Verzamelen van gegevens voor de top producten (top 7 op basis van voorraadomzet)
+  const graphData = warehouses[warehouseId - 1].products.map(product => {
+    const inventoryValue = totalInventoryValue(warehouseId); // Totale voorraadwaarde
+    const salesValue = totalSalesValue(warehouseId); // Totale verkochte waarde
+    const turnoverRate = salesValue !== 0 ? inventoryValue / salesValue : 0; // Voorkom deling door nul
 
+    return {
+      productId: product.id,
+      productTitle: product.title,
+      inventoryValue,
+      salesValue,
+      turnoverRate
+    };
+  });
+// Sorteer de producten op voorraadomzet (turnoverRate) en beperk tot top 7
+const topProducts = graphData.sort((a, b) => b.turnoverRate - a.turnoverRate).slice(0, 7);
+
+  //-----------------------------------------------------------------------------------------------------
   res.render('index', {
     activePage: 'home',
     warehouses,
@@ -202,7 +235,8 @@ app.get('/home', secureMiddleware, async (req, res) => {
       turnoverRate,
       warehouseUtilization: warehouseUtilizationPercentage, // Add warehouse utilization here
     },
-    productSalesData
+    productSalesData,
+    graphData: topProducts // Doorsturen van de top 7 producten voor de grafiek
   }); // activePage => voor gebruik nav item
 });
 
