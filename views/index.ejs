@@ -85,68 +85,125 @@
     <h2>Voorraad Omzet</h2>
     <section class="secondrow">
       <div class="placeholder" id="voorraadOmzet"></div>
+      <button id="resetButton" style="margin-top: 10px; padding: 10px 20px; border-radius: 25px; background-color: #3E3DE0; color: white; border: none; font-size: 14px; cursor: pointer;">
+        Reset Grafiek
+      </button>
       <script type="text/javascript">
-        // De graphData wordt dynamisch van de server naar de client gestuurd
-        const graphData = <%- JSON.stringify(graphData) %>; // Injecteer server-side data in de client-side
-        
-        // Vega-Lite configuratie voor de grafiek
-        const vegaSpec = {
-          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-          "width": "container",  // Pas de breedte aan
-          "height": 400, // Pas de hoogte aan
-          "data": {
-            "values": graphData
-          },
-          "mark": "bar",
-          "encoding": {
-            "x": {
-              "field": "product",  // X-as is gebaseerd op het product
-              "type": "nominal",
-              "axis": { 
-                "title": "Product",
-                "labelAngle": 45  // Rotatie van de x-as labels
-              }
-            },
-            "y": {
-              "field": "value",  // Y-as is gebaseerd op de waarde
-              "type": "quantitative",
-              "title": "Waarde in €"
-            },
-            "color": {
-              "field": "type",  // Kleur op basis van het type (Voorraadwaarde of Verkochte Waarde)
-              "type": "nominal",
-              "scale": {
-                "domain": ["Voorraadwaarde", "Verkochte Waarde"],
-                "range": ["#3E3DE0", "#3de0c6"]  // Blauwe en groene kleuren
-              },
-              "title": "Type"
-            },
-            "tooltip": [
-              { "field": "product", "type": "nominal", "title": "Product" },
-              { "field": "type", "type": "nominal", "title": "Type" },
-              { "field": "value", "type": "quantitative", "title": "Waarde in €" }
-            ]
-          },
-          "config": {
-            "view": {
-              "stroke": null
-            },
-            "legend": {
-              "orient": "bottom",  // Zet de legenda onderaan de grafiek
-              "title": "Type",
-              "symbolSize": 150,  // Pas de grootte van de symbolen in de legenda aan
-              "labelFontSize": 12,  // Pas de lettergrootte van de labels aan
-              "labelPadding": 10  // Pas de ruimte tussen de labels aan
+        // Dynamische data van de server
+        const graphData = <%- JSON.stringify(graphData) %>;
+      
+        // Specificeer een lege array om producten die verborgen moeten worden bij te houden
+        let excludedProducts = [];
+      
+        // Functie om de grafiek te updaten
+        function renderChart() {
+          // Filter de data door de producten die uitgeschakeld zijn te verwijderen
+          const filteredData = graphData.filter(d => !excludedProducts.includes(d.product));
+      
+          // Sorteer de data zodat de kleinste waarde altijd voor de grotere waarde komt
+          const sortedData = filteredData.sort((a, b) => {
+            if (a.product === b.product) {
+              // Als dezelfde productsoort, sorteer op de waarde
+              return a.value - b.value;  // Kleinere waarde eerst
             }
-          }
-        };
+            return 0;
+          });
       
-        // Render de grafiek met Vega-Lite
-        vegaEmbed('#voorraadOmzet', vegaSpec);
+          const vegaSpec = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "width": "container",  // Pas de breedte aan
+            "height": 400, // Pas de hoogte aan
+            "data": {
+              "values": sortedData
+            },
+            "mark": {
+              "type": "bar",
+              "cursor": "pointer"  // Verander de cursor bij hover
+            },
+            "encoding": {
+              "x": {
+                "field": "product",  // X-as is gebaseerd op het product
+                "type": "nominal",
+                "axis": { 
+                  "title": "Producten",  // X-as titel
+                  "titleFontSize": 16,  // Vergroot de grootte van de titel
+                  "titleFontWeight": "bold",  // Zet de titel vetgedrukt
+                  "titlePadding": 10,  // Vergroot de witruimte tussen titel en grafiek
+                  "labelAngle": 45  // Rotatie van de x-as labels
+                }
+              },
+              "y": {
+                "field": "value",  // Y-as is gebaseerd op de waarde
+                "type": "quantitative",
+                "title": "Waarde in euro €",  // Y-as titel
+                "titleFontSize": 16,  // Vergroot de grootte van de titel
+                "titleFontWeight": "bold",  // Zet de titel vetgedrukt
+                "titlePadding": 20  // Vergroot de witruimte tussen titel en grafiek
+              },
+              "color": {
+                "field": "type",  // Kleur op basis van het type (Voorraadwaarde of Verkochte Waarde)
+                "type": "nominal",
+                "scale": {
+                  "domain": ["Voorraadwaarde", "Verkochte Waarde"],
+                  "range": ["#3E3DE0", "#3de0c6"]  // Blauwe en groene kleuren
+                },
+                "title": "Type"
+              },
+              "order": {
+                "field": "value",  // Sorteer de bars op de waarde
+                "type": "quantitative",
+                "sort": "ascending"  // Kleinere waarde eerst
+              },
+              "tooltip": [
+                { "field": "product", "type": "nominal", "title": "Product" },
+                { "field": "type", "type": "nominal", "title": "Type" },
+                { "field": "value", "type": "quantitative", "title": "Waarde in €" }
+              ]
+            },
+            "config": {
+              "view": {
+                "stroke": null
+              },
+              "legend": {
+                "orient": "right",  // Verplaats de legenda naar de rechterkant
+                "title": "Type",
+                "symbolSize": 150,
+                "labelFontSize": 12,
+                "labelPadding": 10
+              }
+            }
+          };
+      
+          // Render de grafiek
+          vegaEmbed('#voorraadOmzet', vegaSpec).then(result => {
+            // Voeg een kliklistener toe aan elke staaf
+            result.view.addEventListener('click', (event, item) => {
+              if (item && item.datum) {
+                const clickedProduct = item.datum.product;
+      
+                // Toggle het product in de excludedProducts array
+                if (excludedProducts.includes(clickedProduct)) {
+                  excludedProducts = excludedProducts.filter(p => p !== clickedProduct);
+                } else {
+                  excludedProducts.push(clickedProduct);
+                }
+      
+                // Update de grafiek na interactie
+                renderChart();
+              }
+            });
+          });
+        }
+      
+        // Eerste rendering van de grafiek
+        renderChart();
+      
+        // Voeg een reset-knop toe
+        document.getElementById('resetButton').addEventListener('click', () => {
+          excludedProducts = [];  // Maak de excludedProducts-array leeg
+          renderChart();          // Herteken de grafiek
+        });
       </script>
-      
-        
-        
         <div class="statcard">
           <i></i>
           <h2><%= stats.turnoverRate %></h2>
