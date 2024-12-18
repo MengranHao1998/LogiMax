@@ -401,12 +401,10 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
     let warehouseId = req.query.warehouseId ? parseInt(req.query.warehouseId as string, 10) : null;
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 6;
 
-    // 校正索引，确保从1开始的warehouseId可以正确映射到从0开始的数组索引
     if (warehouseId !== null) {
-      warehouseId -= 1;  // 调整warehouseId以匹配数组索引
+      warehouseId -= 1;
     }
 
-    // 检查索引是否有效
     if (warehouseId === null || isNaN(warehouseId) || warehouseId < 0 || warehouseId >= warehouses.length) {
       return res.status(400).json({ error: "Invalid warehouseId" });
     }
@@ -421,7 +419,7 @@ app.get('/api/products-stock-value', secureMiddleware, async (req, res) => {
 
       for (let p of selectedProducts) {
         const object: WarehouseProductStockValue = {
-          warehouseId: warehouseId + 1, // 加1恢复原来的ID
+          warehouseId: warehouseId + 1,
           id: p.id,
           title: p.title,
           link: p.link,

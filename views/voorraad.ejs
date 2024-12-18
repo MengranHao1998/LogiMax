@@ -25,7 +25,7 @@
               throw new Error(`HTTP error! Status: ${response.status}`);
             }
       
-            const data = await response.json();
+            const data= await response.json();
             console.log(`Fetched data for warehouse ${warehouseId}:`, data);
       
             if (!data.length) {
@@ -35,22 +35,21 @@
       
             // Sort data by quantity and mark the top 5
             data.sort((a, b) => b.quantity - a.quantity);
-            const top5Data = data.slice(0, 5); // Hoogste 5 producten
+    const top5Data = data.slice(0, 5); // Hoogste 5 producten
     const bottom5Data = data.slice(-5).sort((a, b) => a.quantity - b.quantity); // Laagste 5 producten
 
     // Configuratie voor de Top 5 grafiek
     vegaEmbed("#top5VoorraadOmzet", {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
       "width": "container",
-      "title": "Stock niveau: Top 5",
       "description": `Top 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
       "data": { "values": top5Data },
       "mark": "bar",
       "encoding": {
-        "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name" } },
-        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value" } },
+        "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name","titleFontSize": 16 } },
+        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value","titleFontSize": 16, "titlePadding": 30} },
         "color": {
-          "value": "blue" // Blauwe kleur voor de Top 5
+          "value": "blue", // Blauwe kleur voor de Top 5
         },
         "tooltip": [
           { "field": "title", "type": "ordinal", "title": "Product Name" },
@@ -62,14 +61,12 @@
     // Configuratie voor de Bottom 5 grafiek
     vegaEmbed("#bottom5VoorraadOmzet", {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      "title": "Stock niveau: Bottom 5",
-      "width": "container",
       "description": `Bottom 5 Voorraad Omzet Chart for Warehouse ${warehouseId}`,
       "data": { "values": bottom5Data },
       "mark": "bar",
       "encoding": {
-        "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name" } },
-        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value" } },
+        "x": { "field": "title", "type": "ordinal", "axis": { "labelAngle": -45, "title": "Product Name","titleFontSize": 16 } },
+        "y": { "field": "quantity", "type": "quantitative", "axis": { "title": "Stock Value","titleFontSize": 16,"titlePadding": 30 } },
         "color": {
           "value": "red" // Rode kleur voor de Bottom 5
         },
@@ -87,7 +84,7 @@
 
         function changeWarehouse() {
     const warehouseId = document.getElementById('location').value;
-    window.location.href = `/voorraad?warehouseId=${warehouseId}`; // 刷新页面并传递仓库ID
+    window.location.href = `/voorraad?warehouseId=${warehouseId}`;
 }
 
       
